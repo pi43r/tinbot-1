@@ -1,137 +1,124 @@
-import { Chat } from "@/components/Chat/Chat";
-import { Footer } from "@/components/Layout/Footer";
-import { Navbar } from "@/components/Layout/Navbar";
-import { Message } from "@/types";
-import Head from "next/head";
-import { useEffect, useRef, useState } from "react";
+import { Chat } from "@/components/Chat/Chat"
+import { Footer } from "@/components/Layout/Footer"
+import { Navbar } from "@/components/Layout/Navbar"
+import { Sidebar } from "@/components/Layout/Sidebar"
+import { Message } from "@/types"
+import Head from "next/head"
+import { useEffect, useRef, useState } from "react"
 
 export default function Home() {
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
+  const [sidebar, setSidebar] = useState(true)
+  const [systemPrompt, setSystemPrompt] = useState("")
+  const [messages, setMessages] = useState<Message[]>([])
+  const [loading, setLoading] = useState<boolean>(false)
 
   const handleSend = async (message: Message) => {
-    const updatedMessages = [...messages, message];
+    const updatedMessages = [...messages, message]
 
-    setMessages(updatedMessages);
-    setLoading(true);
+    setMessages(updatedMessages)
+    setLoading(true)
 
     const response = await fetch("/api/chat", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        messages: updatedMessages
-      })
-    });
+        messages: updatedMessages,
+      }),
+    })
 
     if (!response.ok) {
-      setLoading(false);
-      throw new Error(response.statusText);
+      setLoading(false)
+      throw new Error(response.statusText)
     }
 
-    const data = response.body;
+    const data = response.body
 
     if (!data) {
-      return;
+      return
     }
 
-    setLoading(false);
+    setLoading(false)
 
-    const reader = data.getReader();
-    const decoder = new TextDecoder();
-    let done = false;
-    let isFirst = true;
+    const reader = data.getReader()
+    const decoder = new TextDecoder()
+    let done = false
+    let isFirst = true
 
     while (!done) {
-      const { value, done: doneReading } = await reader.read();
-      done = doneReading;
-      const chunkValue = decoder.decode(value);
+      const { value, done: doneReading } = await reader.read()
+      done = doneReading
+      const chunkValue = decoder.decode(value)
 
       if (isFirst) {
-        isFirst = false;
+        isFirst = false
         setMessages((messages) => [
           ...messages,
           {
             role: "assistant",
-            content: chunkValue
-          }
-        ]);
+            content: chunkValue,
+          },
+        ])
       } else {
         setMessages((messages) => {
-          const lastMessage = messages[messages.length - 1];
+          const lastMessage = messages[messages.length - 1]
           const updatedMessage = {
             ...lastMessage,
-            content: lastMessage.content + chunkValue
-          };
-          return [...messages.slice(0, -1), updatedMessage];
-        });
+            content: lastMessage.content + chunkValue,
+          }
+          return [...messages.slice(0, -1), updatedMessage]
+        })
       }
     }
-  };
+  }
 
   const handleReset = () => {
     setMessages([
       {
         role: "assistant",
-        content: `Hi there! I'm Chatbot UI, an AI assistant. I can help you with things like answering questions, providing information, and helping with tasks. How can I help you?`
-      }
-    ]);
-  };
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+        content: systemPrompt,
+      },
+    ])
+  }
 
   useEffect(() => {
     setMessages([
       {
         role: "assistant",
-        content: `Hi there! I'm Chatbot UI, an AI assistant. I can help you with things like answering questions, providing information, and helping with tasks. How can I help you?`
-      }
-    ]);
-  }, []);
+        content: systemPrompt,
+      },
+    ])
+  }, [systemPrompt])
 
   return (
     <>
       <Head>
-        <title>Chatbot UI</title>
-        <meta
-          name="description"
-          content="A simple chatbot starter kit for OpenAI's chat model using Next.js, TypeScript, and Tailwind CSS."
-        />
-        <meta
-          name="viewport"
-          content="width=device-width, initial-scale=1"
-        />
-        <link
-          rel="icon"
-          href="/favicon.ico"
-        />
+        <title>GOAT</title>
+        <meta name="description" content="Quick Goat starter" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <div className="flex flex-col h-screen">
-        <Navbar />
-
-        <div className="flex-1 overflow-auto sm:px-10 pb-4 sm:pb-10">
-          <div className="max-w-[800px] mx-auto mt-4 sm:mt-12">
+        <Navbar setSidebar={setSidebar} sidebar={sidebar} />
+        <div className="h-full flex flex-row overflow-auto">
+          <Sidebar
+            visible={sidebar}
+            systemPrompt={systemPrompt}
+            setSystemPrompt={setSystemPrompt}
+          />
+          <div className="max-w-[800px] mt-1 mx-auto">
             <Chat
               messages={messages}
               loading={loading}
               onSend={handleSend}
               onReset={handleReset}
             />
-            <div ref={messagesEndRef} />
           </div>
         </div>
         <Footer />
       </div>
     </>
-  );
+  )
 }

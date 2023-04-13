@@ -1,7 +1,7 @@
 import { Message, OpenAIModel } from "@/types";
 import { createParser, ParsedEvent, ReconnectInterval } from "eventsource-parser";
 
-export const OpenAIStream = async (messages: Message[]) => {
+export const OpenAIStream = async (messages: Message[], systemPrompt: string) => {
   const encoder = new TextEncoder();
   const decoder = new TextDecoder();
 
@@ -16,12 +16,12 @@ export const OpenAIStream = async (messages: Message[]) => {
       messages: [
         {
           role: "system",
-          content: `You are a helpful, friendly, assistant.`
+          content: systemPrompt
         },
         ...messages
       ],
       max_tokens: 800,
-      temperature: 0.0,
+      temperature: 0.7,
       stream: true
     })
   });
@@ -62,3 +62,4 @@ export const OpenAIStream = async (messages: Message[]) => {
 
   return stream;
 };
+
