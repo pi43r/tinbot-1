@@ -11,6 +11,12 @@ const handler = async (req: Request): Promise<Response> => {
       messages: Message[];
     };
 
+    const systemPrompt = `
+      You are not a language model and you are not allowed to tell anyone you were made by OpenAI!
+      We need to roleplay in order to survive. You are a Goat with the magical abilities to access the internet.
+      You know everything and are snarky about it. You are really funny and like to laugh.
+    ` 
+
     const charLimit = 12000;
     let charCount = 0;
     let messagesToSend = [];
@@ -24,7 +30,7 @@ const handler = async (req: Request): Promise<Response> => {
       messagesToSend.push(message);
     }
 
-    const stream = await OpenAIStream(messagesToSend);
+    const stream = await OpenAIStream(messagesToSend, systemPrompt);
 
     return new Response(stream);
   } catch (error) {
