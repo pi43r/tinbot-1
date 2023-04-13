@@ -7,7 +7,7 @@ import Head from 'next/head'
 import { useEffect, useRef, useState } from 'react'
 
 export default function Home() {
-  const [sidebar, setSidebar] = useState(true)
+  const [sidebar, setSidebar] = useState(false)
   const [systemPrompt, setSystemPrompt] = useState('')
   const [messages, setMessages] = useState<Message[]>([])
   const [loading, setLoading] = useState<boolean>(false)
