@@ -1,7 +1,7 @@
-import { ChangeEvent, FC, FormEvent, useEffect, useState } from "react"
-import PocketBase from "pocketbase"
+import { ChangeEvent, FC, FormEvent, useEffect, useState } from 'react'
+import PocketBase from 'pocketbase'
 
-const pb = new PocketBase("https://goatnet.pockethost.io")
+const pb = new PocketBase('https://goatnet.pockethost.io')
 
 interface Record {
   collectionId: string
@@ -29,8 +29,8 @@ export const Sidebar: FC<SidebarProps> = (props) => {
   const [records, setRecords] = useState<Record[]>([])
 
   const getRecords = async () => {
-    const response = await pb.collection("system").getFullList({
-      sort: "-created",
+    const response = await pb.collection('system').getFullList({
+      sort: '-created',
     })
     return response
   }
@@ -65,7 +65,7 @@ export const Sidebar: FC<SidebarProps> = (props) => {
     }
     const createPBEntry = async (prompt: string) => {
       const data = { prompt: prompt }
-      const record: Record = await pb.collection("system").create(data)
+      const record: Record = await pb.collection('system').create(data)
       console.log(record)
       setRecords([record, ...records])
       return record
@@ -77,8 +77,8 @@ export const Sidebar: FC<SidebarProps> = (props) => {
   return (
     <div
       className={`z-10 absolute md:relative h-[calc(100%-120px)] md:h-full w-full md:w-1/3 border border-gray-300 bg-white transition -translate-x-full 
-                        ${visible ? "translate-x-0" : ""}
-                        ${visible ? "md:block" : "md:hidden"}
+                        ${visible ? 'translate-x-0' : ''}
+                        ${visible ? 'md:block' : 'md:hidden'}
                         `}
     >
       <div className="flex flex-col h-full w-full p-4 overflow-y-auto">
@@ -91,7 +91,7 @@ export const Sidebar: FC<SidebarProps> = (props) => {
                   key={rec.id}
                   className="my-1 border border-gray-300 rounded-md p-2 cursor-pointer 
                                                         hover:bg-gray-400 hover:text-gray-50"
-                  onClick={() => setSystemPrompt(rec.prompt ?? "")}
+                  onClick={() => setSystemPrompt(rec.prompt ?? '')}
                 >
                   {rec.prompt}
                 </div>

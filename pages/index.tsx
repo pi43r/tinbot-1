@@ -1,14 +1,14 @@
-import { Chat } from "@/components/Chat/Chat"
-import { Footer } from "@/components/Layout/Footer"
-import { Navbar } from "@/components/Layout/Navbar"
-import { Sidebar } from "@/components/Layout/Sidebar"
-import { Message } from "@/types"
-import Head from "next/head"
-import { useEffect, useRef, useState } from "react"
+import { Chat } from '@/components/Chat/Chat'
+import { Footer } from '@/components/Layout/Footer'
+import { Navbar } from '@/components/Layout/Navbar'
+import { Sidebar } from '@/components/Layout/Sidebar'
+import { Message } from '@/types'
+import Head from 'next/head'
+import { useEffect, useRef, useState } from 'react'
 
 export default function Home() {
   const [sidebar, setSidebar] = useState(true)
-  const [systemPrompt, setSystemPrompt] = useState("")
+  const [systemPrompt, setSystemPrompt] = useState('')
   const [messages, setMessages] = useState<Message[]>([])
   const [loading, setLoading] = useState<boolean>(false)
 
@@ -18,10 +18,10 @@ export default function Home() {
     setMessages(updatedMessages)
     setLoading(true)
 
-    const response = await fetch("/api/chat", {
-      method: "POST",
+    const response = await fetch('/api/chat', {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         messages: updatedMessages,
@@ -56,7 +56,7 @@ export default function Home() {
         setMessages((messages) => [
           ...messages,
           {
-            role: "assistant",
+            role: 'assistant',
             content: chunkValue,
           },
         ])
@@ -76,7 +76,7 @@ export default function Home() {
   const handleReset = () => {
     setMessages([
       {
-        role: "assistant",
+        role: 'assistant',
         content: systemPrompt,
       },
     ])
@@ -85,7 +85,7 @@ export default function Home() {
   useEffect(() => {
     setMessages([
       {
-        role: "assistant",
+        role: 'assistant',
         content: systemPrompt,
       },
     ])

@@ -1,7 +1,7 @@
-import { FC } from "react";
+import { FC } from 'react'
 
 interface Props {
-  onReset: () => void;
+  onReset: () => void
 }
 
 export const ResetChat: FC<Props> = ({ onReset }) => {
@@ -14,6 +14,5 @@ export const ResetChat: FC<Props> = ({ onReset }) => {
         Reset
       </button>
     </div>
-  );
-};
-;
+  )
+}

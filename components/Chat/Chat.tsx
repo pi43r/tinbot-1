@@ -1,9 +1,9 @@
-import { Message } from "@/types"
-import { FC, useEffect, useRef } from "react"
-import { ChatInput } from "./ChatInput"
-import { ChatLoader } from "./ChatLoader"
-import { ChatMessage } from "./ChatMessage"
-import { ResetChat } from "./ResetChat"
+import { Message } from '@/types'
+import { FC, useEffect, useRef } from 'react'
+import { ChatInput } from './ChatInput'
+import { ChatLoader } from './ChatLoader'
+import { ChatMessage } from './ChatMessage'
+import { ResetChat } from './ResetChat'
 
 interface Props {
   messages: Message[]
@@ -16,7 +16,7 @@ export const Chat: FC<Props> = ({ messages, loading, onSend, onReset }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }
 
   useEffect(() => {
