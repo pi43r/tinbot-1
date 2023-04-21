@@ -1,4 +1,9 @@
-// import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
+
+export default async function handler(req: NextRequest, res: NextResponse) {
+  return 'test'
+}
+
 // import { Configuration, OpenAIApi } from 'openai'
 // import { Readable } from 'stream'
 
