@@ -1,13 +1,14 @@
 import { Message } from '@/types'
 import { IconSend } from '@tabler/icons-react'
 import { FC, KeyboardEvent, useEffect, useRef, useState } from 'react'
+import ListenButton from './ListenButtonGoogle'
 
 interface Props {
   onSend: (message: Message) => void
 }
 
 export const ChatInput: FC<Props> = ({ onSend }) => {
-  const [content, setContent] = useState<string>()
+  const [content, setContent] = useState<string>('')
 
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
@@ -23,7 +24,10 @@ export const ChatInput: FC<Props> = ({ onSend }) => {
 
   const handleSend = () => {
     if (!content) {
-      alert('Please enter a message')
+      textareaRef.current?.classList.add('border-green')
+      setTimeout(() => {
+        textareaRef.current?.classList.remove('border-green')
+      }, 1000)
       return
     }
     onSend({ role: 'user', content })
@@ -45,10 +49,10 @@ export const ChatInput: FC<Props> = ({ onSend }) => {
   }, [content])
 
   return (
-    <div className="relative">
+    <div className="flex flex-row mb-4">
       <textarea
         ref={textareaRef}
-        className="min-h-[44px] rounded-lg pl-4 pr-12 py-2 w-full focus:outline-none focus:ring-1 focus:ring-neutral-300 border-2 border-neutral-200"
+        className="flex-1 min-h-[32px] rounded-lg pl-4 pr-12 py-2 w-full focus:outline-none focus:ring-1 focus:ring-neutral-300 border-2 border-neutral-200"
         style={{ resize: 'none' }}
         placeholder="Type a message..."
         value={content}
@@ -56,10 +60,12 @@ export const ChatInput: FC<Props> = ({ onSend }) => {
         onChange={handleChange}
         onKeyDown={handleKeyDown}
       />
-
-      <button onClick={() => handleSend()}>
-        <IconSend className="absolute top-1 right-2 bottom-3 h-8 w-8 hover:cursor-pointer rounded-full p-1 bg-blue-500 text-white hover:opacity-80" />
-      </button>
+      <div className="flex justify-between">
+        <ListenButton setContent={setContent} handleSend={handleSend} />
+        <button onClick={() => handleSend()}>
+          <IconSend className="m-1 mt-0 w-12 h-12 hover:cursor-pointer rounded-full p-1 bg-blue-500 text-white hover:opacity-80" />
+        </button>
+      </div>
     </div>
   )
 }

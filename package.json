@@ -9,6 +9,9 @@
     "lint": "next lint",
     "prettier": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\" --ignore-path .gitignore"
   },
+  "engines": {
+    "node": ">=17.0.0"
+  },
   "dependencies": {
     "@tabler/icons-react": "^2.9.0",
     "@types/node": "18.15.0",
@@ -22,6 +25,7 @@
     "pocketbase": "^0.13.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-hook-speech-to-text": "^0.8.0",
     "typescript": "4.9.5",
     "zustand": "^4.3.7"
   },

@@ -29,7 +29,7 @@ export const Chat: FC<Props> = ({ messages, loading, onSend, onReset }) => {
         <div className="flex flex-row justify-between items-center mt-0 mb-2 sm:mb-8">
           <ResetChat onReset={onReset} />
         </div>
-        <div className="flex-1 overflow-y-auto rounded-lg px-2 sm:p-4 sm:border border-neutral-300">
+        <div className="flex-1 sm:min-w-[600px] overflow-y-auto rounded-lg px-2 sm:p-4 sm:border border-neutral-300">
           <div className="flex flex-col">
             {messages.map((message, index) => (
               <div key={index} className="my-1 sm:my-1.5">

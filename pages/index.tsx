@@ -3,14 +3,15 @@ import { Footer } from '@/components/Layout/Footer'
 import { Navbar } from '@/components/Layout/Navbar'
 import { Sidebar } from '@/components/Layout/Sidebar'
 import { Message } from '@/types'
+import { useStore } from '@/utils/store'
 import Head from 'next/head'
 import { useEffect, useRef, useState } from 'react'
 
 export default function Home() {
   const [sidebar, setSidebar] = useState(false)
-  const [systemPrompt, setSystemPrompt] = useState('')
   const [messages, setMessages] = useState<Message[]>([])
   const [loading, setLoading] = useState<boolean>(false)
+  const systemPrompt = useStore((e) => e.systemPrompt)
 
   const handleSend = async (message: Message) => {
     const updatedMessages = [...messages, message]
@@ -24,6 +25,7 @@ export default function Home() {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
+        system: systemPrompt,
         messages: updatedMessages,
       }),
     })
@@ -74,22 +76,17 @@ export default function Home() {
   }
 
   const handleReset = () => {
-    setMessages([
-      {
-        role: 'assistant',
-        content: systemPrompt,
-      },
-    ])
+    setMessages([])
   }
 
-  useEffect(() => {
-    setMessages([
-      {
-        role: 'assistant',
-        content: systemPrompt,
-      },
-    ])
-  }, [systemPrompt])
+  // useEffect(() => {
+  //   setMessages([
+  //     {
+  //       role: 'assistant',
+  //       content: systemPrompt,
+  //     },
+  //   ])
+  // }, [systemPrompt])
 
   return (
     <>
@@ -103,11 +100,7 @@ export default function Home() {
       <div className="flex flex-col h-screen">
         <Navbar setSidebar={setSidebar} sidebar={sidebar} />
         <div className="h-full flex flex-row overflow-auto">
-          <Sidebar
-            visible={sidebar}
-            systemPrompt={systemPrompt}
-            setSystemPrompt={setSystemPrompt}
-          />
+          <Sidebar visible={sidebar} />
           <div className="max-w-[800px] mt-1 mx-auto">
             <Chat
               messages={messages}

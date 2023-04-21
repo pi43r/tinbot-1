@@ -5,13 +5,11 @@ import {
   ReconnectInterval,
 } from 'eventsource-parser'
 
-export const OpenAIStream = async (
-  messages: Message[],
-  systemPrompt: string
-) => {
+export const OpenAIStream = async (messages: Message[], system: string) => {
   const encoder = new TextEncoder()
   const decoder = new TextDecoder()
 
+  console.log('openai', messages.length, system)
   const res = await fetch('https://api.openai.com/v1/chat/completions', {
     headers: {
       'Content-Type': 'application/json',
@@ -21,11 +19,11 @@ export const OpenAIStream = async (
     body: JSON.stringify({
       model: OpenAIModel.DAVINCI_TURBO,
       messages: [
+        ...messages,
         {
           role: 'system',
-          content: systemPrompt,
+          content: system,
         },
-        ...messages,
       ],
       max_tokens: 800,
       temperature: 0.7,

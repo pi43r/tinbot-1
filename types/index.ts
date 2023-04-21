@@ -8,3 +8,19 @@ export interface Message {
 }
 
 export type Role = 'assistant' | 'user'
+
+export interface Record {
+  collectionId: string
+  collectionName: string
+  created: string
+  id: string
+  prompt?: string
+  updated: string
+  expand?: RecordExpand
+}
+
+export interface RecordExpand {
+  [key: string]: any
+}
+
+export type Transcriptions = { timestamp: string; text: string }[]
