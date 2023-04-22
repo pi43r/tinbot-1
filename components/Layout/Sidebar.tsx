@@ -11,7 +11,8 @@ interface SidebarProps {
 export const Sidebar: FC<SidebarProps> = (props) => {
   const { visible } = props
   const [records, setRecords] = useState<Record[]>([])
-  const { systemPrompt, setSystemPrompt } = useStore()
+  const { systemPrompt, setSystemPrompt, sttLanguage, setSttLanguage } =
+    useStore()
 
   useEffect(() => {
     const fetchData = async () => {
@@ -27,6 +28,10 @@ export const Sidebar: FC<SidebarProps> = (props) => {
     fetchData()
   }, [])
 
+  const handleLanguageChange = (event: ChangeEvent<HTMLSelectElement>) => {
+    setSttLanguage(event.target.value)
+  }
+
   return (
     <div
       className={`z-10 absolute md:relative h-[calc(100%-120px)] md:h-full w-full md:w-1/3 border border-gray-300 bg-white transition -translate-x-full 
@@ -35,6 +40,20 @@ export const Sidebar: FC<SidebarProps> = (props) => {
                         `}
     >
       <div className="flex flex-col h-full w-full p-4 overflow-y-auto">
+        <div className="mb-2 flex justify-center">
+          <label htmlFor="language-picker" className="mr-2">
+            Language:
+          </label>
+          <select
+            name="language-picker"
+            id="language-picker"
+            value={sttLanguage}
+            onChange={handleLanguageChange}
+          >
+            <option value="en">English</option>
+            <option value="de">Deutsch</option>
+          </select>
+        </div>
         <h2 className="mb-4 text-center">Pick Goat Personality</h2>
         <div className="flex-1 overflow-y-auto">
           {records.length > 0 &&
@@ -42,7 +61,7 @@ export const Sidebar: FC<SidebarProps> = (props) => {
               return (
                 <div
                   key={rec.id}
-                  className="my-1 border border-gray-300 rounded-md p-2 cursor-pointer 
+                  className="my-1 text-xs border border-gray-300 rounded-md p-2 cursor-pointer 
                                                         hover:bg-gray-400 hover:text-gray-50"
                   onClick={() => setSystemPrompt(rec.prompt ?? '')}
                 >

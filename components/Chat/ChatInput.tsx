@@ -23,11 +23,12 @@ export const ChatInput: FC<Props> = ({ onSend }) => {
   }
 
   const handleSend = () => {
+    console.log('handle', content)
     if (!content) {
-      textareaRef.current?.classList.add('border-green')
+      textareaRef.current?.classList.add('border-rose-200')
       setTimeout(() => {
-        textareaRef.current?.classList.remove('border-green')
-      }, 1000)
+        textareaRef.current?.classList.remove('border-rose-200')
+      }, 3000)
       return
     }
     onSend({ role: 'user', content })
@@ -61,7 +62,12 @@ export const ChatInput: FC<Props> = ({ onSend }) => {
         onKeyDown={handleKeyDown}
       />
       <div className="flex justify-between">
-        <ListenButton setContent={setContent} handleSend={handleSend} />
+        <ListenButton
+          content={content}
+          setContent={setContent}
+          onSend={onSend}
+          handleSend={handleSend}
+        />
         <button onClick={() => handleSend()}>
           <IconSend className="m-1 mt-0 w-12 h-12 hover:cursor-pointer rounded-full p-1 bg-blue-500 text-white hover:opacity-80" />
         </button>

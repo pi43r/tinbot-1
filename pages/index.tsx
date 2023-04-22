@@ -11,13 +11,14 @@ export default function Home() {
   const [sidebar, setSidebar] = useState(false)
   const [messages, setMessages] = useState<Message[]>([])
   const [loading, setLoading] = useState<boolean>(false)
-  const systemPrompt = useStore((e) => e.systemPrompt)
+  const { systemPrompt, isGoatTalking, setIsGoatTalking } = useStore()
 
   const handleSend = async (message: Message) => {
     const updatedMessages = [...messages, message]
 
     setMessages(updatedMessages)
     setLoading(true)
+    setIsGoatTalking(true)
 
     const response = await fetch('/api/chat', {
       method: 'POST',
@@ -53,6 +54,9 @@ export default function Home() {
       done = doneReading
       const chunkValue = decoder.decode(value)
 
+      if (done) {
+        setIsGoatTalking(false)
+      }
       if (isFirst) {
         isFirst = false
         setMessages((messages) => [
