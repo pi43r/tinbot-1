@@ -1,3 +1,4 @@
+'use client'
 import { ChangeEvent, FC, useState, useEffect, useLayoutEffect } from 'react'
 import { useStore } from '@/utils/store'
 
