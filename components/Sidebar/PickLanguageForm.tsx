@@ -10,9 +10,10 @@ const PickLanguageForm: FC<PickLanguageProps> = (props) => {
   const [outputVoices, setOutputVoices] = useState<SpeechSynthesisVoice[]>([])
 
   useEffect(() => {
-    const synth = window.speechSynthesis
     setTimeout(() => {
+      const synth = window.speechSynthesis
       const voiceArray = synth.getVoices()
+      console.log(voiceArray)
       setOutputVoices(voiceArray)
     }, 1000)
   }, [])
@@ -33,7 +34,7 @@ const PickLanguageForm: FC<PickLanguageProps> = (props) => {
 
   return (
     <div className="flex justify-around">
-      <div className="mb-2 flex justify-center">
+      <div className="mb-2">
         <label htmlFor="input-picker" className="mr-2">
           input:
         </label>
@@ -47,21 +48,21 @@ const PickLanguageForm: FC<PickLanguageProps> = (props) => {
           <option value="de">Deutsch</option>
         </select>
       </div>
-      <div className="mb-2 flex justify-center">
+      <div className="mb-2">
         <label htmlFor="output-picker" className="mr-2">
           output:
         </label>
-        {outputVoices.length > 0 ? (
+        {filteredVoices.length > 0 ? (
           <select
             name="output-picker"
             id="output-picker"
             onChange={handleTTSLanguage}
           >
-            {outputVoices.map((voice, index) => {
+            {filteredVoices.map((voice, index) => {
               // console.log(voice) // Add this line
               return (
                 <option key={voice.lang + index.toString()} value={index}>
-                  {voice.name}
+                  {voice.voiceURI}
                 </option>
               )
             })}
