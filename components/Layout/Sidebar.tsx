@@ -2,8 +2,13 @@ import { ChangeEvent, FC, FormEvent, useEffect, useState } from 'react'
 import { Record } from '@/types'
 import { getRecords } from '@/utils/pb'
 import { PromptForm } from '../Sidebar/PromptForm'
-import PickLanguageForm from '../Sidebar/PickLanguageForm'
+// import PickLanguageForm from '../Sidebar/PickLanguageForm'
 import { useStore } from '@/utils/store'
+import dynamic from 'next/dynamic'
+
+const PickLanguageForm = dynamic(() => import('../Sidebar/PickLanguageForm'), {
+  ssr: false,
+})
 
 interface SidebarProps {
   visible: boolean
