@@ -20,7 +20,32 @@ export default function Home() {
     setLoading(true)
     setIsGoatTalking(true)
 
-    const response = await fetch('/api/chat', {
+    const response = await fetch('/api/chatcomplete', {
+      //
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        system: systemPrompt,
+        messages: updatedMessages,
+      }),
+    })
+
+    if (!response.ok) {
+      setLoading(false)
+      throw new Error(response.statusText)
+    }
+
+    const data = await response.json()
+    if (!data) {
+      return
+    }
+    setLoading(false)
+    setMessages((messages) => [...messages, data.message])
+
+    /* chat Stream
+    const response = await fetch('/api/chat', { //
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -77,6 +102,7 @@ export default function Home() {
         })
       }
     }
+    UNTIL HERE */
   }
 
   const handleReset = () => {

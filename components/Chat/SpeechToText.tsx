@@ -64,7 +64,6 @@ const SpeechToText: FC<SpeechRecognitionProps> = ({ result, setResult }) => {
   }, [finalTranscript, transcript])
 
   useEffect(() => {
-    console.log('goat talk', isGoatTalking)
     if (isListeningActive && !isGoatTalking) {
       SpeechRecognition.startListening({
         continuous: true,

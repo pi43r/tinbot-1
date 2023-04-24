@@ -5,6 +5,36 @@ import {
   ReconnectInterval,
 } from 'eventsource-parser'
 
+export const OpenAIComplete = async (messages: Message[], system: string) => {
+  console.log('openai', messages.length, system)
+  const res = await fetch('https://api.openai.com/v1/chat/completions', {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+    },
+    method: 'POST',
+    body: JSON.stringify({
+      model: OpenAIModel.DAVINCI_TURBO,
+      messages: [
+        ...messages,
+        {
+          role: 'system',
+          content: system,
+        },
+      ],
+      max_tokens: 800,
+      temperature: 0.7,
+      stream: false,
+    }),
+  })
+  if (res.status !== 200) {
+    throw new Error('OpenAI API returned an error')
+  }
+
+  const body = await res.json()
+  return body.choices[0]
+}
+
 export const OpenAIStream = async (messages: Message[], system: string) => {
   const encoder = new TextEncoder()
   const decoder = new TextDecoder()

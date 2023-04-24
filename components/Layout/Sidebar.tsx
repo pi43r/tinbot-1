@@ -2,6 +2,7 @@ import { ChangeEvent, FC, FormEvent, useEffect, useState } from 'react'
 import { Record } from '@/types'
 import { getRecords } from '@/utils/pb'
 import { PromptForm } from '../Sidebar/PromptForm'
+import PickLanguageForm from '../Sidebar/PickLanguageForm'
 import { useStore } from '@/utils/store'
 
 interface SidebarProps {
@@ -28,10 +29,6 @@ export const Sidebar: FC<SidebarProps> = (props) => {
     fetchData()
   }, [])
 
-  const handleLanguageChange = (event: ChangeEvent<HTMLSelectElement>) => {
-    setSttLanguage(event.target.value)
-  }
-
   return (
     <div
       className={`z-10 absolute md:relative h-[calc(100%-120px)] md:h-full w-full md:w-1/3 border border-gray-300 bg-white transition -translate-x-full 
@@ -40,20 +37,7 @@ export const Sidebar: FC<SidebarProps> = (props) => {
                         `}
     >
       <div className="flex flex-col h-full w-full p-4 overflow-y-auto">
-        <div className="mb-2 flex justify-center">
-          <label htmlFor="language-picker" className="mr-2">
-            Language:
-          </label>
-          <select
-            name="language-picker"
-            id="language-picker"
-            value={sttLanguage}
-            onChange={handleLanguageChange}
-          >
-            <option value="en">English</option>
-            <option value="de">Deutsch</option>
-          </select>
-        </div>
+        <PickLanguageForm />
         <h2 className="mb-4 text-center">Pick Goat Personality</h2>
         <div className="flex-1 overflow-y-auto">
           {records.length > 0 &&

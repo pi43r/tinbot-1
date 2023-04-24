@@ -43,6 +43,9 @@ dependencies:
   regenerator-runtime:
     specifier: ^0.13.11
     version: 0.13.11
+  tts-react:
+    specifier: ^1.2.0
+    version: 1.2.0(react-dom@18.2.0)(react@18.2.0)
   typescript:
     specifier: 4.9.5
     version: 4.9.5
@@ -2502,6 +2505,17 @@ packages:
     dependencies:
       tslib: 1.14.1
       typescript: 4.9.5
+    dev: false
+
+  /tts-react@1.2.0(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-+uOyN12XBsEdm+ri84hcgC0B2REqtaQSV3KAVLoIBIodCJ6ypuGprnpcx7xUBSM3KiZ4IAqBxK8LfHj+DvgS2w==}
+    engines: {node: '>=12.22.12'}
+    peerDependencies:
+      react: ^17.0.0 || ^18.2.0
+      react-dom: ^17.0.0 || ^18.2.0
+    dependencies:
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
     dev: false
 
   /type-check@0.4.0:

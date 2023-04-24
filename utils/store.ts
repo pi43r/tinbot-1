@@ -7,6 +7,8 @@ interface globalStore {
   setIsGoatTalking: (isTalking: boolean) => void
   sttLanguage: string
   setSttLanguage: (lang: string) => void
+  ttsLanguage: SpeechSynthesisVoice | undefined
+  setTtsLanguage: (voice: SpeechSynthesisVoice | undefined) => void
 }
 
 export const useStore = create<globalStore>()((set) => ({
@@ -18,4 +20,7 @@ export const useStore = create<globalStore>()((set) => ({
     set(() => ({ isGoatTalking: isTalking })),
   sttLanguage: 'en',
   setSttLanguage: (lang: string) => set(() => ({ sttLanguage: lang })),
+  ttsLanguage: undefined,
+  setTtsLanguage: (voice: SpeechSynthesisVoice | undefined) =>
+    set(() => ({ ttsLanguage: voice })),
 }))
