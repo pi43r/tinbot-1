@@ -51,13 +51,13 @@ const PickLanguageForm: FC<PickLanguageProps> = (props) => {
         <label htmlFor="output-picker" className="mr-2">
           output:
         </label>
-        {filteredVoices.length > 0 ? (
+        {outputVoices.length > 0 ? (
           <select
             name="output-picker"
             id="output-picker"
             onChange={handleTTSLanguage}
           >
-            {filteredVoices.map((voice, index) => {
+            {outputVoices.map((voice, index) => {
               // console.log(voice) // Add this line
               return (
                 <option key={voice.lang + index.toString()} value={index}>
