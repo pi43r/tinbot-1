@@ -10,14 +10,12 @@ const PickLanguageForm: FC<PickLanguageProps> = (props) => {
 
   const [outputVoices, setOutputVoices] = useState<SpeechSynthesisVoice[]>([])
 
-  useEffect(() => {
-    setTimeout(() => {
-      const synth = window.speechSynthesis
-      const voiceArray = synth.getVoices()
-      console.log(voiceArray)
-      setOutputVoices(voiceArray)
-    }, 5000)
-  }, [])
+  function loadVoices() {
+    const synth = window.speechSynthesis
+    const voiceArray = synth.getVoices()
+    console.log(voiceArray)
+    setOutputVoices(voiceArray)
+  }
 
   const handleSTTLanguage = (event: ChangeEvent<HTMLSelectElement>) => {
     setSttLanguage(event.target.value)
@@ -69,7 +67,9 @@ const PickLanguageForm: FC<PickLanguageProps> = (props) => {
             })}
           </select>
         ) : (
-          <span>No voices available</span>
+          <button className="p-1 border rounded-md" onClick={loadVoices}>
+            load voices
+          </button>
         )}
       </div>
     </div>
