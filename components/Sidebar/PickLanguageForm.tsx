@@ -1,4 +1,4 @@
-import { ChangeEvent, FC, useState, useEffect } from 'react'
+import { ChangeEvent, FC, useState, useEffect, useLayoutEffect } from 'react'
 import { useStore } from '@/utils/store'
 
 interface PickLanguageProps {}
@@ -11,7 +11,10 @@ const PickLanguageForm: FC<PickLanguageProps> = (props) => {
 
   useEffect(() => {
     const synth = window.speechSynthesis
-    setOutputVoices(synth.getVoices())
+    setTimeout(() => {
+      const voiceArray = synth.getVoices()
+      setOutputVoices(voiceArray)
+    }, 1000)
   }, [])
 
   const handleSTTLanguage = (event: ChangeEvent<HTMLSelectElement>) => {
