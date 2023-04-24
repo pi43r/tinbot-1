@@ -15,7 +15,7 @@ const PickLanguageForm: FC<PickLanguageProps> = (props) => {
       const voiceArray = synth.getVoices()
       console.log(voiceArray)
       setOutputVoices(voiceArray)
-    }, 1000)
+    }, 5000)
   }, [])
 
   const handleSTTLanguage = (event: ChangeEvent<HTMLSelectElement>) => {
