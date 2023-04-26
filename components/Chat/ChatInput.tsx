@@ -1,13 +1,16 @@
 import { Message } from '@/types'
 import { IconSend } from '@tabler/icons-react'
 import { FC, KeyboardEvent, useEffect, useRef, useState } from 'react'
-import ListenButton from './ListenButtonGoogle'
+import ListenButtonGoogle from './ListenButtonGoogle'
+import ListenButton from './ListenButton'
+import { useStore } from '@/utils/store'
 
 interface Props {
   onSend: (message: Message) => void
 }
 
 export const ChatInput: FC<Props> = ({ onSend }) => {
+  const { useGoogle } = useStore()
   const [content, setContent] = useState<string>('')
 
   const textareaRef = useRef<HTMLTextAreaElement>(null)
@@ -62,12 +65,16 @@ export const ChatInput: FC<Props> = ({ onSend }) => {
         onKeyDown={handleKeyDown}
       />
       <div className="flex justify-between">
-        <ListenButton
-          content={content}
-          setContent={setContent}
-          onSend={onSend}
-          handleSend={handleSend}
-        />
+        {useGoogle ? (
+          <ListenButtonGoogle
+            content={content}
+            setContent={setContent}
+            onSend={onSend}
+            handleSend={handleSend}
+          />
+        ) : (
+          <ListenButton onSend={onSend} setContent={setContent} />
+        )}
         <button onClick={() => handleSend()}>
           <IconSend className="m-1 mt-0 w-12 h-12 hover:cursor-pointer rounded-full p-1 bg-blue-500 text-white hover:opacity-80" />
         </button>

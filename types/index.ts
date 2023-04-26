@@ -23,4 +23,4 @@ export interface RecordExpand {
   [key: string]: any
 }
 
-export type Transcriptions = { timestamp: string; text: string }[]
+export type Transcription = { timestamp: string; text: string }

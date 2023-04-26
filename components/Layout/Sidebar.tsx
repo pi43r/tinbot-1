@@ -17,8 +17,7 @@ interface SidebarProps {
 export const Sidebar: FC<SidebarProps> = (props) => {
   const { visible } = props
   const [records, setRecords] = useState<Record[]>([])
-  const { systemPrompt, setSystemPrompt, sttLanguage, setSttLanguage } =
-    useStore()
+  const { systemPrompt, setSystemPrompt, useGoogle, setUseGoogle } = useStore()
 
   useEffect(() => {
     const fetchData = async () => {
@@ -42,6 +41,23 @@ export const Sidebar: FC<SidebarProps> = (props) => {
                         `}
     >
       <div className="flex flex-col h-full w-full p-4 overflow-y-auto">
+        <div className="flex mb-4 ml-8 items-center">
+          <input
+            type="checkbox"
+            className="hidden"
+            checked={useGoogle}
+            onChange={(e) => setUseGoogle(e.target.checked)}
+          />
+          <label
+            htmlFor="useGoogle"
+            className={`border rounded-lg p-1 cursor-pointer ${
+              useGoogle ? 'bg-blue-500 text-white' : 'bg-gray-200'
+            }`}
+            onClick={() => setUseGoogle(!useGoogle)}
+          >
+            {useGoogle ? 'use whisper' : 'use google'}
+          </label>
+        </div>
         <PickLanguageForm />
         <h2 className="mb-4 text-center">Pick Goat Personality</h2>
         <div className="flex-1 overflow-y-auto">

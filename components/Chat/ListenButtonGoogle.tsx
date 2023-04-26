@@ -1,6 +1,4 @@
 import { FC, Dispatch, useCallback, useEffect, useRef, useState } from 'react'
-import { IconMicrophone, IconMicrophoneOff } from '@tabler/icons-react'
-import { Transcriptions } from '@/types'
 import dynamic from 'next/dynamic'
 const SpeechToText = dynamic(() => import('./SpeechToText'), {
   ssr: false,

@@ -1,11 +1,10 @@
 import { Message } from '@/types'
 import { OpenAIComplete } from '@/utils/openai'
+import { NextResponse, NextRequest } from 'next/server'
 
-export const config = {
-  runtime: 'edge',
-}
+export const runtime = 'edge'
 
-const handler = async (req: Request): Promise<Response> => {
+export async function POST(req: NextRequest) {
   try {
     const { messages, system } = (await req.json()) as {
       messages: Message[]
@@ -28,11 +27,16 @@ const handler = async (req: Request): Promise<Response> => {
     const result = await OpenAIComplete(messagesToSend, system)
     console.log(result) //returns JSON {message: {}, finish_reason: '', index: 0}
 
-    return new Response(JSON.stringify(result))
-  } catch (error) {
+    return NextResponse.json({ result })
+  } catch (error: any) {
     console.error(error)
-    return new Response('Error', { status: 500 })
+    return NextResponse.json(
+      {
+        error: {
+          message: `An error occurred during your request: ${error.message}`,
+        },
+      },
+      { status: 500 }
+    )
   }
 }
-
-export default handler

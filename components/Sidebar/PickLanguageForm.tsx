@@ -5,8 +5,13 @@ import { useStore } from '@/utils/store'
 interface PickLanguageProps {}
 
 const PickLanguageForm: FC<PickLanguageProps> = (props) => {
-  const { sttLanguage, setSttLanguage, ttsLanguage, setTtsLanguage } =
-    useStore()
+  const {
+    sttLanguage,
+    setSttLanguage,
+    ttsLanguage,
+    setTtsLanguage,
+    useGoogle,
+  } = useStore()
 
   const [outputVoices, setOutputVoices] = useState<SpeechSynthesisVoice[]>([])
 
@@ -32,7 +37,7 @@ const PickLanguageForm: FC<PickLanguageProps> = (props) => {
   )
 
   return (
-    <div className="flex justify-around">
+    <div className="flex items-center justify-around">
       <div className="mb-2">
         <label htmlFor="input-picker" className="mr-2">
           input:
@@ -42,6 +47,7 @@ const PickLanguageForm: FC<PickLanguageProps> = (props) => {
           id="input-picker"
           value={sttLanguage}
           onChange={handleSTTLanguage}
+          disabled={!useGoogle}
         >
           <option value="en">English</option>
           <option value="de">Deutsch</option>

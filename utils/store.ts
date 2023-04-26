@@ -9,6 +9,8 @@ interface globalStore {
   setSttLanguage: (lang: string) => void
   ttsLanguage: SpeechSynthesisVoice | undefined
   setTtsLanguage: (voice: SpeechSynthesisVoice | undefined) => void
+  useGoogle: boolean
+  setUseGoogle: (bool: boolean) => void
 }
 
 export const useStore = create<globalStore>()((set) => ({
@@ -23,4 +25,6 @@ export const useStore = create<globalStore>()((set) => ({
   ttsLanguage: undefined,
   setTtsLanguage: (voice: SpeechSynthesisVoice | undefined) =>
     set(() => ({ ttsLanguage: voice })),
+  useGoogle: false,
+  setUseGoogle: (bool: boolean) => set(() => ({ useGoogle: bool })),
 }))

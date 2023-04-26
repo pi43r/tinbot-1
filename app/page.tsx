@@ -1,10 +1,10 @@
+'use client'
 import { Chat } from '@/components/Chat/Chat'
 import { Footer } from '@/components/Layout/Footer'
 import { Navbar } from '@/components/Layout/Navbar'
 import { Sidebar } from '@/components/Layout/Sidebar'
 import { Message } from '@/types'
 import { useStore } from '@/utils/store'
-import Head from 'next/head'
 import { useEffect, useRef, useState } from 'react'
 
 export default function Home() {
@@ -21,11 +21,7 @@ export default function Home() {
     setIsGoatTalking(true)
 
     const response = await fetch('/api/chatcomplete', {
-      //
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
       body: JSON.stringify({
         system: systemPrompt,
         messages: updatedMessages,
@@ -37,12 +33,12 @@ export default function Home() {
       throw new Error(response.statusText)
     }
 
-    const data = await response.json()
-    if (!data) {
+    const { result } = await response.json()
+    if (!result) {
       return
     }
     setLoading(false)
-    setMessages((messages) => [...messages, data.message])
+    setMessages((messages) => [...messages, result.message])
 
     /* chat Stream
     const response = await fetch('/api/chat', { //
@@ -120,13 +116,6 @@ export default function Home() {
 
   return (
     <>
-      <Head>
-        <title>GOAT</title>
-        <meta name="description" content="Quick Goat starter" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
       <div className="flex flex-col h-screen">
         <Navbar setSidebar={setSidebar} sidebar={sidebar} />
         <div className="h-full flex flex-row overflow-auto">

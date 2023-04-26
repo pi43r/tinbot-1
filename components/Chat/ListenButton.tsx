@@ -1,14 +1,17 @@
 import { FC, Dispatch, useCallback, useEffect, useRef, useState } from 'react'
 import { IconMicrophone, IconMicrophoneOff } from '@tabler/icons-react'
-import { Transcriptions } from '@/types'
+import { Message, Transcription } from '@/types'
+import { useStore } from '@/utils/store'
 
 interface ListenButtonProps {
   setContent: Dispatch<React.SetStateAction<string>>
+  onSend: (message: Message) => void
 }
 
 const POST_DATA = true
-const ListenButton: FC<ListenButtonProps> = ({ setContent }) => {
-  const [result, setResult] = useState<Transcriptions>([])
+const ListenButton: FC<ListenButtonProps> = ({ setContent, onSend }) => {
+  const { isGoatTalking } = useStore()
+  const [result, setResult] = useState<Transcription>({} as Transcription)
   const [isRecording, setIsRecording] = useState(false)
   const [, , startRecording, stopRecording, stream, recorder] = useMic()
   const requestAnimationId = useRef<number>()
@@ -27,8 +30,11 @@ const ListenButton: FC<ListenButtonProps> = ({ setContent }) => {
         body: formData,
       }).then((r) => r.json())
 
-      console.log(res)
-
+      if (!!res.error) {
+        console.warn(res.error.message)
+        return
+      }
+      setResult(res)
       //   setResult((text) => {
       //     const nextResult = [...text]
       //     nextResult.push({ timestamp: res.timestamp, text: res.result })
@@ -103,14 +109,35 @@ const ListenButton: FC<ListenButtonProps> = ({ setContent }) => {
   }
 
   useEffect(() => {
-    console.log(result)
-  }, [result])
+    console.log('setContent', result)
+    if (!result.text || result.text == '\n') return
+    const text = removeNewLine(result.text)
+    setContent(text)
+    setTimeout(() => {
+      onSend({ role: 'user', content: text })
+      setContent('')
+    }, 1000)
+  }, [result, setContent])
+
+  function removeNewLine(text: string) {
+    if (text.endsWith('\n')) {
+      return text.substring(0, text.length - 1)
+    }
+    return text
+  }
+
+  useEffect(() => {
+    console.log('Goat talking', isGoatTalking)
+    console.log('recording', isRecording)
+    if (isGoatTalking && isRecording) handleStop()
+    if (!isGoatTalking && isRecording) handleStart()
+  }, [isGoatTalking])
 
   return (
     <button>
       {!isRecording ? (
         <IconMicrophone
-          className="m-1 h-8 w-8 hover:cursor-pointer rounded-full p-1 bg-rose-400 text-white hover:opacity-80"
+          className="m-1 mt-0 h-12 w-12 hover:cursor-pointer rounded-full p-1 bg-orange-400 text-white hover:opacity-80"
           onClick={() => {
             setIsRecording(true)
             handleStart()
@@ -118,10 +145,16 @@ const ListenButton: FC<ListenButtonProps> = ({ setContent }) => {
         />
       ) : (
         <IconMicrophoneOff
-          className="m-1 h-8 w-8 hover:cursor-pointer rounded-full p-1 bg-rose-500 text-white animate-pulse"
+          className={`m-1 mt-0 h-12 w-12 ${
+            isGoatTalking
+              ? 'bg-gray-200'
+              : 'hover:cursor-pointer hover:opacity-70 bg-orange-400 '
+          }  rounded-full p-1 text-white `}
           onClick={() => {
-            setIsRecording(false)
-            handleStop()
+            if (!isGoatTalking) {
+              setIsRecording(false)
+              handleStop()
+            }
           }}
         />
       )}
@@ -157,7 +190,8 @@ function useMic(): [
   }
 
   function stopMicrophone() {
-    stream?.getTracks().forEach((track) => track.stop())
+    if (!stream) return
+    stream.getTracks().forEach((track) => track.stop())
   }
 
   const startRecording = (callback: (ev: BlobEvent) => void) => {
@@ -168,6 +202,7 @@ function useMic(): [
 
   function stopRecording() {
     if (!recorder.current) return
+    if (recorder.current.state == 'inactive') return
     recorder.current?.stop()
   }
 
