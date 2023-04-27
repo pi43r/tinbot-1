@@ -4,7 +4,9 @@ import Websocket from '@/components/Websocket'
 
 export default function Page() {
   const [isClient, setIsClient] = useState(false)
-  useEffect(() => setIsClient(true), [])
+  useEffect(() => {
+    if (typeof window !== 'undefined') setIsClient(true)
+  }, [])
 
   return <>{isClient && <Websocket />}</>
 }
