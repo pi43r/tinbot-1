@@ -51,14 +51,14 @@ export default function Page() {
           <p>abstraction: {message.abstraction}</p>
           <p>dance: {message.dance}</p>
           <p>speed: {message.speed}</p>
+          <button
+            className="p-2 my-2 bg-white border rounded-lg cursor-pointer hover:drop-shadow"
+            onClick={handleDance}
+          >
+            send Dance
+          </button>
         </>
       )}
-      <button
-        className="p-2 my-2 bg-white border rounded-lg cursor-pointer hover:drop-shadow"
-        onClick={handleDance}
-      >
-        send Dance
-      </button>
     </div>
   )
 }
