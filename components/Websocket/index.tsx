@@ -3,8 +3,8 @@ import { useEffect, useRef, useState } from 'react'
 import { Communicator } from '@/utils/communicator'
 import dynamic from 'next/dynamic'
 
-const WS_ENDPOINT = `ws://${window.location.hostname}:8010`
-const SUPERVISOR_ENDPOINT = `http://${window.location.hostname}:9001`
+const WS_ENDPOINT = `ws://localhost:8010`
+const SUPERVISOR_ENDPOINT = `http://localhost:9001`
 
 interface DanceMsg {
   abstraction: string
