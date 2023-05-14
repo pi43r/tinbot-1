@@ -1,3 +1,5 @@
+'use client'
+
 import { ChangeEvent, FC, useState, useEffect } from 'react'
 import { useStore } from '@/utils/store'
 import { Voice } from '@/types'
@@ -21,10 +23,12 @@ const PickLanguageForm: FC<PickLanguageProps> = () => {
     const synth = window.speechSynthesis
     if (synth) {
       const voiceArray = synth.getVoices()
-      console.log(voiceArray)
-      setOutputVoices(voiceArray)
+      const filteredVoices = voiceArray.filter(
+        (voice) => voice.lang.includes('en') || voice.lang.includes('de')
+      )
+      setOutputVoices(filteredVoices)
     }
-  }, [])
+  }, [useGoogle])
 
   const handleSTTLanguage = (event: ChangeEvent<HTMLSelectElement>) => {
     setSttLanguage(event.target.value)
@@ -41,10 +45,6 @@ const PickLanguageForm: FC<PickLanguageProps> = () => {
     const voice = outputVoices[voiceIndex]
     setTtsLanguage(voice)
   }
-
-  const filteredVoices = outputVoices.filter(
-    (voice) => voice.lang.includes('en') || voice.lang.includes('de')
-  )
 
   return (
     <div className="flex items-center justify-around">
@@ -73,20 +73,15 @@ const PickLanguageForm: FC<PickLanguageProps> = () => {
             id="output-picker"
             onChange={handleTTSLanguage}
           >
-            {filteredVoices.length > 0 ? (
-              filteredVoices.map((voice, index) => (
+            {outputVoices.length > 0 &&
+              outputVoices.map((voice, index) => (
                 <option
                   key={voice.lang + index.toString()}
                   value={index.toString()}
                 >
                   {voice.voiceURI}
                 </option>
-              ))
-            ) : (
-              <button className="p-1 border rounded-md" onClick={loadVoices}>
-                load voices
-              </button>
-            )}
+              ))}
           </select>
         )}
         {!useGoogle && (
