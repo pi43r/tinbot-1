@@ -1,34 +1,44 @@
-'use client'
-import { ChangeEvent, FC, useState, useEffect, useLayoutEffect } from 'react'
+import { ChangeEvent, FC, useState, useEffect } from 'react'
 import { useStore } from '@/utils/store'
+import { Voice } from '@/types'
 
 interface PickLanguageProps {}
 
-const PickLanguageForm: FC<PickLanguageProps> = (props) => {
+const PickLanguageForm: FC<PickLanguageProps> = () => {
   const {
     sttLanguage,
     setSttLanguage,
     ttsLanguage,
     setTtsLanguage,
     useGoogle,
+    voices,
+    setVoice,
   } = useStore()
 
   const [outputVoices, setOutputVoices] = useState<SpeechSynthesisVoice[]>([])
 
-  function loadVoices() {
+  useEffect(() => {
     const synth = window.speechSynthesis
-    const voiceArray = synth.getVoices()
-    console.log(voiceArray)
-    setOutputVoices(voiceArray)
-  }
+    if (synth) {
+      const voiceArray = synth.getVoices()
+      console.log(voiceArray)
+      setOutputVoices(voiceArray)
+    }
+  }, [])
 
   const handleSTTLanguage = (event: ChangeEvent<HTMLSelectElement>) => {
     setSttLanguage(event.target.value)
   }
 
   const handleTTSLanguage = (event: ChangeEvent<HTMLSelectElement>) => {
-    const voiceIndex: number = parseInt(event.target.value)
-    const voice: SpeechSynthesisVoice = outputVoices[voiceIndex]
+    const voiceIndex = parseInt(event.target.value)
+    const voice = voices[voiceIndex]
+    setVoice(voice)
+  }
+
+  const handleVoiceChange = (event: ChangeEvent<HTMLSelectElement>) => {
+    const voiceIndex = parseInt(event.target.value)
+    const voice = outputVoices[voiceIndex]
     setTtsLanguage(voice)
   }
 
@@ -57,25 +67,40 @@ const PickLanguageForm: FC<PickLanguageProps> = (props) => {
         <label htmlFor="output-picker" className="mr-2">
           output:
         </label>
-        {filteredVoices.length > 0 ? (
+        {useGoogle && (
           <select
             name="output-picker"
             id="output-picker"
             onChange={handleTTSLanguage}
           >
-            {filteredVoices.map((voice, index) => {
-              // console.log(voice) // Add this line
-              return (
-                <option key={voice.lang + index.toString()} value={index}>
+            {filteredVoices.length > 0 ? (
+              filteredVoices.map((voice, index) => (
+                <option
+                  key={voice.lang + index.toString()}
+                  value={index.toString()}
+                >
                   {voice.voiceURI}
                 </option>
-              )
-            })}
+              ))
+            ) : (
+              <button className="p-1 border rounded-md" onClick={loadVoices}>
+                load voices
+              </button>
+            )}
           </select>
-        ) : (
-          <button className="p-1 border rounded-md" onClick={loadVoices}>
-            load voices
-          </button>
+        )}
+        {!useGoogle && (
+          <select
+            name="output-picker"
+            id="output-picker"
+            onChange={handleVoiceChange}
+          >
+            {voices.map((voice, index) => (
+              <option key={voice.uuid} value={index.toString()}>
+                {voice.name}
+              </option>
+            ))}
+          </select>
         )}
       </div>
     </div>

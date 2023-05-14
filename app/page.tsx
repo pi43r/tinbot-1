@@ -6,12 +6,27 @@ import { Sidebar } from '@/components/Layout/Sidebar'
 import { Message } from '@/types'
 import { useStore } from '@/utils/store'
 import { useEffect, useRef, useState } from 'react'
+import useVoices from '@/utils/hooks/useVoices'
 
 export default function Home() {
   const [sidebar, setSidebar] = useState(false)
   const [messages, setMessages] = useState<Message[]>([])
   const [loading, setLoading] = useState<boolean>(false)
-  const { systemPrompt, isGoatTalking, setIsGoatTalking } = useStore()
+  const {
+    systemPrompt,
+    isGoatTalking,
+    setIsGoatTalking,
+    setVoice,
+    voices,
+    setVoices,
+  } = useStore()
+
+  const fetchedVoices = useVoices()
+
+  useEffect(() => {
+    setVoices(fetchedVoices)
+    setVoice(fetchedVoices[0])
+  }, [fetchedVoices, setVoice, setVoices])
 
   const handleSend = async (message: Message) => {
     const updatedMessages = [...messages, message]

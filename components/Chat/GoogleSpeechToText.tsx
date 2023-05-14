@@ -18,7 +18,7 @@ type result = {
 }
 
 const SpeechToText: FC<SpeechRecognitionProps> = ({ result, setResult }) => {
-  const { isGoatTalking, sttLanguage } = useStore()
+  const { isGoatTalking, setIsGoatTalking, sttLanguage } = useStore()
   const [isListeningActive, setIsListeningActive] = useState(false)
 
   const {

@@ -10,41 +10,49 @@ interface ListenButtonProps {
 
 const POST_DATA = true
 const ListenButton: FC<ListenButtonProps> = ({ setContent, onSend }) => {
-  const { isGoatTalking } = useStore()
+  const { isGoatTalking, setIsGoatTalking } = useStore()
   const [result, setResult] = useState<Transcription>({} as Transcription)
   const [isRecording, setIsRecording] = useState(false)
   const [, , startRecording, stopRecording, stream, recorder] = useMic()
   const requestAnimationId = useRef<number>()
 
-  const sendChunks = useCallback(async (chunks: Blob) => {
-    if (POST_DATA) {
-      const formData = new FormData()
-      const timestamp = Date.now().toString()
+  const sendChunks = useCallback(
+    async (chunks: Blob) => {
+      if (POST_DATA) {
+        const formData = new FormData()
+        const timestamp = Date.now().toString()
 
-      formData.append('audio', chunks)
-      // formData.append('prompt', prompt.current || '')
-      formData.append('timestamp', timestamp)
+        formData.append('audio', chunks)
+        // formData.append('prompt', prompt.current || '')
+        formData.append('timestamp', timestamp)
+        setIsGoatTalking(true)
+        const res = await fetch('/api/transcription', {
+          method: 'POST',
+          body: formData,
+        }).then((r) => r.json())
 
-      const res = await fetch('/api/transcription', {
-        method: 'POST',
-        body: formData,
-      }).then((r) => r.json())
+        if (!!res.error) {
+          console.warn(res.error.message)
+          setIsGoatTalking(false)
+          return
+        }
 
-      if (!!res.error) {
-        console.warn(res.error.message)
-        return
+        if (!res.text || res.text === '\n') {
+          setIsGoatTalking(false)
+        }
+        setResult(res)
+        //   setResult((text) => {
+        //     const nextResult = [...text]
+        //     nextResult.push({ timestamp: res.timestamp, text: res.result })
+        //     // prompt.current = prompt.current + ' ' + res.result
+        //     return nextResult
+        //   })
+      } else {
+        console.log('POST DATA')
       }
-      setResult(res)
-      //   setResult((text) => {
-      //     const nextResult = [...text]
-      //     nextResult.push({ timestamp: res.timestamp, text: res.result })
-      //     // prompt.current = prompt.current + ' ' + res.result
-      //     return nextResult
-      //   })
-    } else {
-      console.log('POST DATA')
-    }
-  }, [])
+    },
+    [setIsGoatTalking]
+  )
 
   /**
    * https://stackoverflow.com/questions/46543341/how-can-i-extract-the-preceding-audio-from-microphone-as-a-buffer-when-silence

@@ -1,6 +1,6 @@
 import { FC, Dispatch, useCallback, useEffect, useRef, useState } from 'react'
 import dynamic from 'next/dynamic'
-const SpeechToText = dynamic(() => import('./SpeechToText'), {
+const SpeechToText = dynamic(() => import('./GoogleSpeechToText'), {
   ssr: false,
 })
 import { Message } from '@/types'

@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { Voice } from '@/types'
 
 interface globalStore {
   systemPrompt: string
@@ -11,6 +12,10 @@ interface globalStore {
   setTtsLanguage: (voice: SpeechSynthesisVoice | undefined) => void
   useGoogle: boolean
   setUseGoogle: (bool: boolean) => void
+  voice: Voice
+  setVoice: (voice: Voice) => void
+  voices: Voice[]
+  setVoices: (arr: Voice[]) => void
 }
 
 export const useStore = create<globalStore>()((set) => ({
@@ -27,4 +32,8 @@ export const useStore = create<globalStore>()((set) => ({
     set(() => ({ ttsLanguage: voice })),
   useGoogle: false,
   setUseGoogle: (bool: boolean) => set(() => ({ useGoogle: bool })),
+  voice: { name: '', uuid: '' },
+  setVoice: (voice: Voice) => set(() => ({ voice: voice })),
+  voices: [],
+  setVoices: (arr: Voice[]) => set(() => ({ voices: arr })),
 }))

@@ -1,0 +1,15 @@
+[
+    {"name": "elmo", "uuid": "59d99cba-448e-458f-9dfb-244b619ef15b" },
+    {"name": "freddie-mercury", "uuid": "4a11def0-c783-43a6-be3c-9ee69c9f2e30" },
+    {"name": "baldi", "uuid": "55758716-b064-4227-ad8a-3310c8e5f131" },
+    {"name": "glados", "uuid": "61dd3cf7-4b0e-42dc-9634-29e6b8ceb2e8" },
+    {"name": "gummibar-racing", "uuid": "ed1060e7-b7c7-4cfa-9577-184c653e12d6" },
+    {"name": "gummibar-show-pilot", "uuid": "6114aa37-c07b-4ee5-9515-49f37b257b1e" },
+    {"name": "miss-piggy", "uuid": "f7e12f96-fb99-4eee-b672-46b4a366c762" },
+    {"name": "miss-piggy2", "uuid": "dc99076c-2569-4602-8ed9-c3775fe2b5eb" },
+    {"name": "piglet-steve-schatzberg", "uuid": "7df7b666-8485-4185-bd2c-fa59af36d27b" },
+    {"name": "piglet-jf", "uuid": "1558f870-0018-4c39-bc92-de83136d6c85" },
+    {"name": "pinkie-pie", "uuid": "ab40701c-b0d1-414d-b2f9-6f543729ede7" },
+    {"name": "peppa-pig", "uuid": "63e0039e-7430-4cad-b514-1aec2ff83867" },
+    {"name": "gonzo", "uuid": "e86122fa-caa7-4716-bdc5-45e9fc634bd1" }
+]

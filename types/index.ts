@@ -24,3 +24,5 @@ export interface RecordExpand {
 }
 
 export type Transcription = { timestamp: string; text: string }
+
+export type Voice = { name: string; uuid: string }
