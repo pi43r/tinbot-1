@@ -35,7 +35,7 @@ export const Sidebar: FC<SidebarProps> = (props) => {
 
   return (
     <div
-      className={`z-10 absolute md:relative h-[calc(100%-120px)] md:h-full w-full md:w-1/3 border border-gray-300 bg-white transition -translate-x-full 
+      className={`z-10 absolute md:relative h-full w-full md:w-1/3 border border-gray-300 bg-white transition -translate-x-full 
                         ${visible ? 'translate-x-0' : ''}
                         ${visible ? 'md:block' : 'md:hidden'}
                         `}

@@ -3,6 +3,7 @@ import { Chat } from '@/components/Chat/Chat'
 import { Footer } from '@/components/Layout/Footer'
 import { Navbar } from '@/components/Layout/Navbar'
 import { Sidebar } from '@/components/Layout/Sidebar'
+import { SidebarRight } from '@/components/Layout/SidebarRight'
 import { Message } from '@/types'
 import { useStore } from '@/utils/store'
 import { useEffect, useRef, useState } from 'react'
@@ -10,6 +11,7 @@ import useVoices from '@/utils/hooks/useVoices'
 
 export default function Home() {
   const [sidebar, setSidebar] = useState(false)
+  const [sidebarRight, setSidebarRight] = useState(false)
   const [messages, setMessages] = useState<Message[]>([])
   const [loading, setLoading] = useState<boolean>(false)
   const {
@@ -131,9 +133,14 @@ export default function Home() {
 
   return (
     <>
-      <div className="flex flex-col h-screen">
-        <Navbar setSidebar={setSidebar} sidebar={sidebar} />
-        <div className="h-full flex flex-row overflow-auto">
+      <div className="flex flex-col chat-container">
+        <Navbar
+          setSidebar={setSidebar}
+          sidebar={sidebar}
+          setSidebarRight={setSidebarRight}
+          sidebarRight={sidebarRight}
+        />
+        <div className="relative h-full flex flex-row overflow-hidden">
           <Sidebar visible={sidebar} />
           <div className="max-w-[800px] mt-1 mx-auto">
             <Chat
@@ -143,6 +150,7 @@ export default function Home() {
               onReset={handleReset}
             />
           </div>
+          <SidebarRight visible={sidebarRight} />
         </div>
         <Footer />
       </div>

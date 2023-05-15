@@ -22,7 +22,7 @@ export const OpenAIComplete = async (messages: Message[], system: string) => {
           content: system,
         },
       ],
-      max_tokens: 800,
+      max_tokens: 300,
       temperature: 0.7,
       stream: false,
     }),

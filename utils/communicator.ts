@@ -105,6 +105,7 @@ export class Communicator {
 
   onWsError(event: Event) {
     console.log('WebSocket Error', event)
+    return event
   }
 
   onWsMsg(event: MessageEvent) {
