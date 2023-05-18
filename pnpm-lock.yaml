@@ -46,6 +46,9 @@ dependencies:
   react-dom:
     specifier: 18.2.0
     version: 18.2.0(react@18.2.0)
+  react-screen-wake-lock:
+    specifier: ^3.0.1
+    version: 3.0.1(react@18.2.0)
   react-speech-recognition:
     specifier: ^3.10.0
     version: 3.10.0(react@18.2.0)
@@ -63,6 +66,9 @@ dependencies:
     version: 4.3.8(react@18.2.0)
 
 devDependencies:
+  '@types/dom-screen-wake-lock':
+    specifier: ^1.0.1
+    version: 1.0.1
   '@types/react-speech-recognition':
     specifier: ^3.9.2
     version: 3.9.2
@@ -336,6 +342,10 @@ packages:
   /@tabler/icons@2.18.0:
     resolution: {integrity: sha512-N7a20mwbhrFXNqvd8Rxa0Btwu1Li5rQbqdIi3mzt5HRjP25PbyYuTU2BXbu8yMEnUk018Gi13gpS/jlMgXFuOw==}
     dev: false
+
+  /@types/dom-screen-wake-lock@1.0.1:
+    resolution: {integrity: sha512-WJQas3OFGcC8AeMzaa7FwzzbNNfanuV2R12kQYNp4BkUMghsRz5JxJ5RgVhJifhw7t0s6LvRSWZArmKbMDZ+5g==}
+    dev: true
 
   /@types/dom-speech-recognition@0.0.1:
     resolution: {integrity: sha512-udCxb8DvjcDKfk1WTBzDsxFbLgYxmQGKrE/ricoMqHRNjSlSUCcamVTA5lIQqzY10mY5qCY0QDwBfFEwhfoDPw==}
@@ -2356,6 +2366,15 @@ packages:
 
   /react-is@16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
+    dev: false
+
+  /react-screen-wake-lock@3.0.1(react@18.2.0):
+    resolution: {integrity: sha512-7igtGC2btjFiPqn7JoqRqrUvSV9wX7ZB8uCtP6LA9qYcTfY5i7VqelfjZ/b57jnGR9Q5TykAaX4Lkeok4j06jA==}
+    engines: {node: '>=14.16'}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      react: 18.2.0
     dev: false
 
   /react-speech-recognition@3.10.0(react@18.2.0):

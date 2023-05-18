@@ -28,6 +28,7 @@
     "pocketbase": "^0.14.4",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-screen-wake-lock": "^3.0.1",
     "react-speech-recognition": "^3.10.0",
     "regenerator-runtime": "^0.13.11",
     "tts-react": "^1.2.0",
@@ -35,6 +36,7 @@
     "zustand": "^4.3.8"
   },
   "devDependencies": {
+    "@types/dom-screen-wake-lock": "^1.0.1",
     "@types/react-speech-recognition": "^3.9.2",
     "@types/regenerator-runtime": "^0.13.1",
     "autoprefixer": "^10.4.14",

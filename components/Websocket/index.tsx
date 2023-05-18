@@ -2,11 +2,12 @@
 import { useEffect, useRef, useState } from 'react'
 import { Communicator } from '@/utils/communicator'
 import dynamic from 'next/dynamic'
+import { useStore } from '@/utils/store'
 
 const WS_ENDPOINT = `ws://localhost:8010`
 const SUPERVISOR_ENDPOINT = `http://localhost:9001`
 
-interface DanceMsg {
+interface BodyMsg {
   abstraction: string
   dance: string
   speed: string
@@ -22,17 +23,28 @@ interface VoiceMsg {
 }
 
 export default function Websocket() {
-  const [message, setMessage] = useState<DanceMsg | null>(null)
+  const [bodyMessage, setBodyMessage] = useState<BodyMsg | null>(null)
   const [voiceMessage, setVoiceMessage] = useState<VoiceMsg | null>(null)
+  const [modeMessage, setModeMessage] = useState<any | null>(null)
+  const { mode, setMode } = useStore()
   const comm = useRef<Communicator>()
   useEffect(() => {
     comm.current = new Communicator(WS_ENDPOINT)
 
-    comm.current.subscribe('performance/body', (message: DanceMsg) => {
-      setMessage(message)
+    comm.current.subscribe('performance/movement', (message: BodyMsg) => {
+      setBodyMessage(message)
     })
     comm.current.subscribe('performance/voice', (message: VoiceMsg) => {
+      // console.log(message)
       setVoiceMessage(message)
+    })
+
+    comm.current.subscribe('performance/mode', (message: any) => {
+      // console.log(message?.key)
+      if (mode != message?.key) {
+        setMode(message?.key)
+        setModeMessage(message)
+      }
     })
 
     return () => {
@@ -43,7 +55,7 @@ export default function Websocket() {
 
   function handleDance() {
     if (!comm.current) return
-    comm.current.publish('performance/body', {
+    comm.current.publish('performance/movement', {
       abstraction: Math.random(),
       dance: Math.random(),
       speed: Math.random(),
@@ -61,41 +73,61 @@ export default function Websocket() {
     })
   }
 
+  function prettyPrint(msg: any) {
+    let result = []
+    for (const key in msg) {
+      if (Object.hasOwnProperty.call(msg, key)) {
+        const element = msg[key]
+
+        let formattedValue = element.toString()
+
+        if (key == 't') {
+          formattedValue = element.toFixed(1) + ' s'
+        } else if (isNumeric(element)) {
+          formattedValue = (element * 100).toFixed(2) + ' %'
+        }
+
+        result.push(`${key} = ${formattedValue}`)
+      }
+    }
+
+    return result
+  }
+
+  function isNumeric(n: any) {
+    return !isNaN(parseFloat(n)) && isFinite(n)
+  }
+
   return (
     <div className="p-4">
       <h1 className="text-4xl mb-4">Websocket Test</h1>
-      {!message && (
-        <span className="text-red-800">
-          Problems connecting to localhost:8010
-        </span>
-      )}
-      {message && (
-        <>
-          <h2 className="text-xl font-bold">body</h2>
-          <p>abstraction: {message.abstraction}</p>
-          <p>dance: {message.dance}</p>
-          <p>speed: {message.speed}</p>
-          <button
-            className="p-2 my-2 bg-white border rounded-lg cursor-pointer hover:drop-shadow"
-            onClick={handleDance}
-          >
-            send random dance
-          </button>
 
-          <h2 className="text-xl font-bold">voice</h2>
-          <p>sing: {voiceMessage?.sing}</p>
-          <p>abstraction: {voiceMessage?.abstraction}</p>
-          <p>speed: {voiceMessage?.speed}</p>
-          <p>loudness: {voiceMessage?.loudness}</p>
-          <p>dialogue: {voiceMessage?.dialogue}</p>
-          <button
-            className="p-2 my-2 bg-white border rounded-lg cursor-pointer hover:drop-shadow"
-            onClick={handleVoice}
-          >
-            send random voice
-          </button>
-        </>
-      )}
+      <h2 className="text-xl font-bold">body</h2>
+      {prettyPrint(bodyMessage).map((e, i) => (
+        <p key={'body' + i}>{e}</p>
+      ))}
+      <button
+        className="p-2 my-2 bg-white border rounded-lg cursor-pointer hover:drop-shadow"
+        onClick={handleDance}
+      >
+        send random dance
+      </button>
+
+      <h2 className="text-xl font-bold">voice</h2>
+      {prettyPrint(voiceMessage).map((e, i) => (
+        <p key={'voice' + i}>{e}</p>
+      ))}
+      <button
+        className="p-2 my-2 bg-white border rounded-lg cursor-pointer hover:drop-shadow"
+        onClick={handleVoice}
+      >
+        send random voice
+      </button>
+      <h2 className="text-xl font-bold">Mode</h2>
+      <p>current: {mode}</p>
+      {prettyPrint(modeMessage).map((e, i) => (
+        <p key={'mode' + i}>{e}</p>
+      ))}
     </div>
   )
 }
