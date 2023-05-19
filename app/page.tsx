@@ -8,6 +8,9 @@ import { Message } from '@/types'
 import { useStore } from '@/utils/store'
 import { useEffect, useRef, useState } from 'react'
 import useVoices from '@/utils/hooks/useVoices'
+import { modePrompts } from '@/utils/modes'
+import SpeechGenerator from '@/components/Chat/SpeechGenerator'
+import VoiceClone from '@/components/Chat/VoiceClone'
 
 export default function Home() {
   const [sidebar, setSidebar] = useState(false)
@@ -16,11 +19,14 @@ export default function Home() {
   const [loading, setLoading] = useState<boolean>(false)
   const {
     systemPrompt,
+    setSystemPrompt,
     isGoatTalking,
     setIsGoatTalking,
     setVoice,
+    voice,
     voices,
     setVoices,
+    mode,
   } = useStore()
 
   const fetchedVoices = useVoices()
@@ -120,6 +126,7 @@ export default function Home() {
 
   const handleReset = () => {
     setMessages([])
+    setIsGoatTalking(false)
   }
 
   // useEffect(() => {
@@ -130,6 +137,13 @@ export default function Home() {
   //     },
   //   ])
   // }, [systemPrompt])
+
+  useEffect(() => {
+    const prompt = modePrompts[mode]
+    if (prompt) {
+      setSystemPrompt(prompt)
+    }
+  }, [mode, setSystemPrompt])
 
   return (
     <>
@@ -149,6 +163,7 @@ export default function Home() {
               onSend={handleSend}
               onReset={handleReset}
             />
+            {mode === 'as_weird_as_it_gets' && <VoiceClone />}
           </div>
           <SidebarRight visible={sidebarRight} />
         </div>

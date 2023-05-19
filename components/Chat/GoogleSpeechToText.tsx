@@ -18,8 +18,21 @@ type result = {
 }
 
 const SpeechToText: FC<SpeechRecognitionProps> = ({ result, setResult }) => {
-  const { isGoatTalking, setIsGoatTalking, sttLanguage } = useStore()
+  const { mode, isGoatTalking, setIsGoatTalking, sttLanguage } = useStore()
   const [isListeningActive, setIsListeningActive] = useState(false)
+
+  const recStartModes = new Set(['walking_chatting', 'walking_hectic_asking'])
+  useEffect(() => {
+    const shouldRecord = recStartModes.has(mode)
+
+    if (shouldRecord && !isListeningActive) {
+      setIsListeningActive(true)
+      startListening()
+    } else if (!shouldRecord && isListeningActive) {
+      setIsListeningActive(false)
+      stopListening()
+    }
+  }, [mode])
 
   const {
     transcript,

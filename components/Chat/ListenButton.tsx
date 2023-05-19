@@ -10,11 +10,24 @@ interface ListenButtonProps {
 
 const POST_DATA = true
 const ListenButton: FC<ListenButtonProps> = ({ setContent, onSend }) => {
-  const { isGoatTalking, setIsGoatTalking } = useStore()
+  const { mode, isGoatTalking, setIsGoatTalking } = useStore()
   const [result, setResult] = useState<Transcription>({} as Transcription)
   const [isRecording, setIsRecording] = useState(false)
   const [, , startRecording, stopRecording, stream, recorder] = useMic()
   const requestAnimationId = useRef<number>()
+
+  const recStartModes = new Set(['walking_chatting', 'walking_hectic_asking'])
+  useEffect(() => {
+    const shouldRecord = recStartModes.has(mode)
+
+    if (shouldRecord && !isRecording) {
+      setIsRecording(true)
+      handleStart()
+    } else if (!shouldRecord && isRecording) {
+      setIsRecording(false)
+      handleStop()
+    }
+  }, [mode])
 
   const sendChunks = useCallback(
     async (chunks: Blob) => {

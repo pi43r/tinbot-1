@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Communicator } from '@/utils/communicator'
 import dynamic from 'next/dynamic'
 import { useStore } from '@/utils/store'
+import { Mode } from '@/utils/modes'
 
 const WS_ENDPOINT = `ws://localhost:8010`
 const SUPERVISOR_ENDPOINT = `http://localhost:9001`
@@ -22,6 +23,12 @@ interface VoiceMsg {
   dialogue: string
 }
 
+interface ModeMsg {
+  t: string
+  key: Mode
+  description: string
+}
+
 export default function Websocket() {
   const [bodyMessage, setBodyMessage] = useState<BodyMsg | null>(null)
   const [voiceMessage, setVoiceMessage] = useState<VoiceMsg | null>(null)
@@ -39,11 +46,11 @@ export default function Websocket() {
       setVoiceMessage(message)
     })
 
-    comm.current.subscribe('performance/mode', (message: any) => {
-      // console.log(message?.key)
+    comm.current.subscribe('performance/mode', (message: ModeMsg) => {
+      // console.log(message)
+      setModeMessage(message)
       if (mode != message?.key) {
         setMode(message?.key)
-        setModeMessage(message)
       }
     })
 
@@ -52,6 +59,13 @@ export default function Websocket() {
       comm.current.ws?.close()
     }
   }, [])
+
+  useEffect(() => {
+    if (!modeMessage) return
+    if (mode !== modeMessage.key) {
+      comm.current?.publish('performance/change', { key: mode })
+    }
+  }, [mode])
 
   function handleDance() {
     if (!comm.current) return

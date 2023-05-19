@@ -2,42 +2,20 @@
 import { Message } from '@/types'
 import dynamic from 'next/dynamic'
 import { FC, useEffect, useState } from 'react'
-// import Speak from './TextToSpeech'
+import Speak from './TextToSpeech'
 import SpeechGenerator from './SpeechGenerator'
 import { useStore } from '@/utils/store'
 
-const Speak = dynamic(() => import('./TextToSpeech'), {
-  ssr: false,
-})
+// const Speak = dynamic(() => import('./TextToSpeech'), {
+//   ssr: false,
+// })
 
 interface Props {
   message: Message
 }
 
-interface ParsedMessage {
-  system: string
-  history: string
-  answer: string
-}
-
 export const ChatMessage: FC<Props> = ({ message }) => {
   const { voice, useGoogle } = useStore()
-  const [parsedMessage, setParsedMessage] = useState<ParsedMessage | null>(null)
-
-  useEffect(() => {
-    setParsedMessage(null)
-    if (message.role == 'assistant') {
-      // check if message can be parsed with json
-      try {
-        const parsedMessage = JSON.parse(message.content)
-        console.log(parsedMessage)
-        setParsedMessage(parsedMessage)
-      } catch (e) {
-        console.log('Message cannot be parsed with JSON')
-        console.log(message.content)
-      }
-    }
-  }, [message])
 
   return (
     <div
@@ -51,9 +29,7 @@ export const ChatMessage: FC<Props> = ({ message }) => {
           style={{ overflowWrap: 'anywhere' }}
         >
           {useGoogle ? (
-            <Speak>
-              {parsedMessage ? parsedMessage?.answer : message.content}
-            </Speak>
+            <Speak>{message.content}</Speak>
           ) : (
             <>
               {message.content}
