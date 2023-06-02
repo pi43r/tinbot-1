@@ -19,14 +19,14 @@ class TinyEventBus {
 export class Communicator {
   endpoint: string
   ws: WebSocket | null = null
-  reconnectRetryS = 5.0
+  reconnectRetryS = 10.0
   eventBus: TinyEventBus
   topics: Set<string>
   constructor(endpoint: string) {
     this.endpoint = endpoint
     this.ws = null
 
-    this.reconnectRetryS = 5.0
+    this.reconnectRetryS = 10.0
 
     this.eventBus = new TinyEventBus()
 
@@ -104,7 +104,7 @@ export class Communicator {
   }
 
   onWsError(event: Event) {
-    console.log('WebSocket Error', event)
+    // console.log('WebSocket Error', event)
     return event
   }
 

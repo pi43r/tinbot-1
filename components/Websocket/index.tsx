@@ -1,12 +1,8 @@
 'use client'
 import { useEffect, useRef, useState } from 'react'
 import { Communicator } from '@/utils/communicator'
-import dynamic from 'next/dynamic'
 import { useStore } from '@/utils/store'
 import { Mode } from '@/utils/modes'
-
-const WS_ENDPOINT = `ws://localhost:8010`
-const SUPERVISOR_ENDPOINT = `http://localhost:9001`
 
 interface BodyMsg {
   abstraction: string
@@ -33,39 +29,67 @@ export default function Websocket() {
   const [bodyMessage, setBodyMessage] = useState<BodyMsg | null>(null)
   const [voiceMessage, setVoiceMessage] = useState<VoiceMsg | null>(null)
   const [modeMessage, setModeMessage] = useState<any | null>(null)
+  const [error, setError] = useState<any>(null)
   const { mode, setMode } = useStore()
+  const [wsEndpoint, setWsEndpoint] = useState<string>(
+    () => window.localStorage.getItem('wsEndpoint') || 'ws://localhost:8010'
+  )
   const comm = useRef<Communicator>()
-  useEffect(() => {
-    comm.current = new Communicator(WS_ENDPOINT)
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
+    event.preventDefault()
+    const updatedEndpoint = (
+      event.currentTarget.elements.namedItem('wsEndpoint') as HTMLInputElement
+    )?.value
+    window.localStorage.setItem('wsEndpoint', updatedEndpoint)
+    setWsEndpoint(updatedEndpoint)
+  }
+
+  const startComm = (wsEndpoint: string) => {
+    // stop comm and start a new one when wsEndpoint changes
+    if (comm.current) {
+      comm.current.ws?.close()
+    }
+
+    comm.current = new Communicator(wsEndpoint)
 
     comm.current.subscribe('performance/movement', (message: BodyMsg) => {
       setBodyMessage(message)
     })
+
     comm.current.subscribe('performance/voice', (message: VoiceMsg) => {
-      // console.log(message)
       setVoiceMessage(message)
     })
 
     comm.current.subscribe('performance/mode', (message: ModeMsg) => {
-      // console.log(message)
       setModeMessage(message)
-      if (mode != message?.key) {
+      if (mode !== message?.key) {
         setMode(message?.key)
       }
     })
+    /*
+      Add error handling
+      on error is an event that get's returned from here:
+      comm.current.ws?.onerror
+    */
+  }
+
+  useEffect(() => {
+    startComm(wsEndpoint)
 
     return () => {
       if (!comm.current) return
+      console.log('closing ' + wsEndpoint)
       comm.current.ws?.close()
     }
-  }, [])
+  }, [wsEndpoint])
 
   useEffect(() => {
     if (!modeMessage) return
     if (mode !== modeMessage.key) {
       comm.current?.publish('performance/change', { key: mode })
     }
-  }, [mode])
+  }, [mode, modeMessage])
 
   function handleDance() {
     if (!comm.current) return
@@ -76,6 +100,7 @@ export default function Websocket() {
       t: Math.random(),
     })
   }
+
   function handleVoice() {
     if (!comm.current) return
     comm.current.publish('performance/voice', {
@@ -114,6 +139,18 @@ export default function Websocket() {
 
   return (
     <div className="p-4">
+      <form onSubmit={handleSubmit}>
+        <input
+          className="border p-1 mr-2"
+          type="text"
+          id="wsEndpoint"
+          name="wsEndpoint"
+          defaultValue={wsEndpoint}
+        />
+        <button className="border rounded-md p-1" type="submit">
+          save
+        </button>
+      </form>
       <h1 className="text-4xl mb-4">Websocket Test</h1>
 
       <h2 className="text-xl font-bold">body</h2>

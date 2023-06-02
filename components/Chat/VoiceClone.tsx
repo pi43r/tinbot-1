@@ -57,7 +57,9 @@ const VoiceClone: FC = () => {
         ></audio>
       )}
       {refAudioObj.current && (
-        <h2 className="border rounded-md m-2">{refAudioObj.current.name}</h2>
+        <h2 className="border rounded-md my-2 p-2">
+          voice cloning: {refAudioObj.current.name}
+        </h2>
       )}
     </>
   )

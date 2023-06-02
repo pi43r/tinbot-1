@@ -157,13 +157,13 @@ export default function Home() {
         <div className="relative h-full flex flex-row overflow-hidden">
           <Sidebar visible={sidebar} />
           <div className="max-w-[800px] mt-1 mx-auto">
+            {mode === 'as_weird_as_it_gets' && <VoiceClone />}
             <Chat
               messages={messages}
               loading={loading}
               onSend={handleSend}
               onReset={handleReset}
             />
-            {mode === 'as_weird_as_it_gets' && <VoiceClone />}
           </div>
           <SidebarRight visible={sidebarRight} />
         </div>
