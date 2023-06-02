@@ -58,7 +58,7 @@ const ScreenAwakeToggle: FC = () => {
   }, [])
 
   if (!isSupported) {
-    console.log('wake lock support:', isSupported)
+    // console.log('wake lock support:', isSupported)
     return null
   }
 
