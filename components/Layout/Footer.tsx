@@ -3,6 +3,7 @@ import { useStore } from '@/utils/store'
 import { modeOptions } from '@/utils/modes'
 export const Footer: FC = () => {
   const { mode, setMode } = useStore()
+
   return (
     <div className="flex flex-col border-t border-neutral-300 items-center sm:justify-between justify-center">
       <div className="w-full flex flex-wrap justify-evenly text-xs p-1">
