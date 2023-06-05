@@ -6,13 +6,12 @@ import { useStore } from '../store'
 export default function useVoices() {
   const [voices, setVoices] = useState<UberduckVoice[]>([])
 
-  const { setUberduckVoice, uberduckVoices, setUberduckVoices } = useStore()
+  // const { setUberduckVoice, uberduckVoices, setUberduckVoices } = useStore()
 
-  useEffect(() => {
-    if (voices.length == 0) return
-    setUberduckVoices(voices)
-    setUberduckVoice(voices[0])
-  }, [voices, setUberduckVoice, setUberduckVoices])
+  // useEffect(() => {
+  //   if (voices.length == 0) return
+  //   setUberduckVoices(voices)
+  // }, [voices, setUberduckVoices])
 
   useEffect(() => {
     async function fetchVoices() {

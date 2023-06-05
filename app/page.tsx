@@ -18,8 +18,6 @@ export default function Home() {
   const [loading, setLoading] = useState<boolean>(false)
   const { systemPrompt, setSystemPrompt, setIsGoatTalking, mode } = useStore()
 
-  useVoices()
-
   const handleSend = async (message: Message) => {
     const updatedMessages = [...messages, message]
 

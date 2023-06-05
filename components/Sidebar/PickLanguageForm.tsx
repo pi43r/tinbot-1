@@ -1,13 +1,32 @@
 'use client'
 
-import { ChangeEvent, FC, useState, useEffect } from 'react'
+import {
+  ChangeEvent,
+  FC,
+  useState,
+  useEffect,
+  useRef,
+  useLayoutEffect,
+  useCallback,
+} from 'react'
 import { useStore } from '@/utils/store'
+import useVoices from '@/utils/hooks/useVoices'
 
 export const InputPicker: FC = () => {
   const { sttLanguage, setSttLanguage, useGoogle } = useStore()
   const handleInputChange = (event: ChangeEvent<HTMLSelectElement>) => {
-    setSttLanguage(event.target.value)
+    const selectedLanguage = event.target.value
+    setSttLanguage(selectedLanguage)
+    localStorage.setItem('sttLanguage', selectedLanguage) // save to local storage
   }
+
+  useEffect(() => {
+    /* retrieve sttLanguage from local storage when website first loads and set it to our state */
+    const storedLanguage = localStorage.getItem('sttLanguage')
+    if (storedLanguage && storedLanguage !== sttLanguage) {
+      setSttLanguage(storedLanguage)
+    }
+  }, [sttLanguage, setSttLanguage])
 
   return (
     <div className="flex flex-col my-4 text-lg">
@@ -29,74 +48,146 @@ export const InputPicker: FC = () => {
 }
 
 export const OutputPicker: FC = () => {
-  const { setGoogleOutputVoice, useGoogle, uberduckVoices, setUberduckVoice } =
-    useStore()
-
-  const [outputVoices, setOutputVoices] = useState<SpeechSynthesisVoice[]>([])
-
-  useEffect(() => {
-    const synth = window.speechSynthesis
-    if (synth) {
-      const voiceArray = synth.getVoices()
-      const filteredVoices = voiceArray.filter(
-        (voice) => voice.lang.includes('en') || voice.lang.includes('de')
-      )
-      setOutputVoices(filteredVoices)
-    }
-  }, [useGoogle])
-
-  const handleUberduckOutputLanguage = (
-    event: ChangeEvent<HTMLSelectElement>
-  ) => {
-    const voiceIndex = parseInt(event.target.value)
-    const voice = uberduckVoices[voiceIndex]
-    setUberduckVoice(voice)
-  }
-
-  const handleGoogleOutputLanguage = (
-    event: ChangeEvent<HTMLSelectElement>
-  ) => {
-    const voiceIndex = parseInt(event.target.value)
-    const voice = outputVoices[voiceIndex]
-    console.log(voice)
-    setGoogleOutputVoice(voice)
-  }
+  const { useGoogle } = useStore()
 
   return (
     <div className="flex flex-col my-4 text-lg">
       <label htmlFor="output-picker" className="text-gray-400">
         Voice
       </label>
-      {useGoogle && (
-        <select
-          name="output-picker"
-          id="output-picker"
-          onChange={handleGoogleOutputLanguage}
-        >
-          {outputVoices.length > 0 &&
-            outputVoices.map((voice, index) => (
-              <option
-                key={voice.lang + index.toString()}
-                value={index.toString()}
-              >
-                {voice.voiceURI}
-              </option>
-            ))}
-        </select>
-      )}
-      {!useGoogle && (
-        <select
-          name="output-picker"
-          id="output-picker"
-          onChange={handleUberduckOutputLanguage}
-        >
-          {uberduckVoices.map((voice, index) => (
-            <option key={voice.uuid} value={index.toString()}>
-              {voice.name}
-            </option>
-          ))}
-        </select>
-      )}
+
+      {useGoogle && <GoogleOutputPicker />}
+
+      {!useGoogle && <UberduckOutputPicker />}
     </div>
+  )
+}
+
+const UberduckOutputPicker: FC = () => {
+  const { setUberduckVoice, uberduckVoice } = useStore()
+  const uberduckOutputPickerRef = useRef<HTMLSelectElement>(null)
+  const uberduckVoices = useVoices()
+
+  // handle Uberduck
+  useEffect(() => {
+    if (!uberduckVoice) return
+    if (!uberduckVoice?.name) {
+      setUberduckVoice(uberduckVoices[0])
+      return
+    }
+    if (uberduckOutputPickerRef.current) {
+      const value = uberduckVoice?.name
+      const index = uberduckVoices.findIndex((voice) => voice.name === value)
+      uberduckOutputPickerRef.current.selectedIndex = index
+    }
+  }, [setUberduckVoice, uberduckVoice, uberduckVoices])
+
+  const handleUberduckOutputLanguage = useCallback(
+    (event: React.ChangeEvent<HTMLSelectElement>): void => {
+      const voiceIndex = parseInt(event.target.value)
+      const voice = uberduckVoices[voiceIndex]
+      setUberduckVoice(voice)
+      localStorage.setItem('uberduckVoice', JSON.stringify(voice))
+    },
+    [setUberduckVoice, uberduckVoices]
+  )
+
+  return (
+    <select
+      name="output-picker"
+      id="output-picker"
+      ref={uberduckOutputPickerRef}
+      onChange={handleUberduckOutputLanguage}
+    >
+      {uberduckVoices.map((voice, index) => (
+        <option key={voice.uuid} value={index}>
+          {voice.name}
+        </option>
+      ))}
+    </select>
+  )
+}
+
+const GoogleOutputPicker: FC = () => {
+  const { googleOutputVoice, setGoogleOutputVoice, useGoogle } = useStore()
+  const [googleVoices, setGoogleVoices] = useState<SpeechSynthesisVoice[]>([])
+  const googleOutputPickerRef = useRef<HTMLSelectElement>(null)
+
+  function getGoogleVoices(): Promise<SpeechSynthesisVoice[]> {
+    const checkVoices = () => {
+      return window.speechSynthesis
+        .getVoices()
+        .filter(
+          (voice) => voice.lang.includes('en') || voice.lang.includes('de')
+        )
+    }
+
+    return new Promise((resolve) => {
+      if (window.speechSynthesis.getVoices().length > 0) {
+        resolve(checkVoices())
+      } else {
+        window.speechSynthesis.onvoiceschanged = () => {
+          resolve(checkVoices())
+        }
+      }
+    })
+  }
+
+  useEffect(() => {
+    getGoogleVoices().then((voices) => {
+      setGoogleVoices(voices)
+    })
+
+    return () => {
+      window.speechSynthesis.cancel()
+      window.speechSynthesis.onvoiceschanged = null
+    }
+  }, [])
+
+  useEffect(() => {
+    const storedGoogleOutputVoice = JSON.parse(
+      localStorage.getItem('googleOutputVoice')!
+    )
+
+    if (storedGoogleOutputVoice && googleVoices.length > 0) {
+      const desiredVoice = googleVoices.find(
+        (voice) => voice.voiceURI === storedGoogleOutputVoice
+      )
+      setGoogleOutputVoice(desiredVoice)
+    }
+  }, [setGoogleOutputVoice, googleVoices])
+
+  useEffect(() => {
+    if (googleOutputPickerRef.current) {
+      const index = googleVoices.findIndex(
+        (voice) => voice.voiceURI === googleOutputVoice?.voiceURI
+      )
+      googleOutputPickerRef.current.selectedIndex = index
+    }
+  }, [googleOutputVoice, googleVoices])
+
+  const handleGoogleOutputLanguage = useCallback(
+    (event: ChangeEvent<HTMLSelectElement>): void => {
+      const voiceIndex = parseInt(event.target.value)
+      const voice = googleVoices[voiceIndex]
+      setGoogleOutputVoice(voice)
+      localStorage.setItem('googleOutputVoice', JSON.stringify(voice.voiceURI))
+    },
+    [setGoogleOutputVoice, googleVoices]
+  )
+
+  return (
+    <select
+      name="output-picker"
+      id="output-picker"
+      ref={googleOutputPickerRef}
+      onChange={handleGoogleOutputLanguage}
+    >
+      {googleVoices.map((voice, index) => (
+        <option key={voice.lang + index} value={index}>
+          {voice.voiceURI}
+        </option>
+      ))}
+    </select>
   )
 }

@@ -33,10 +33,12 @@ export const ChatMessage: FC<Props> = ({ message }) => {
           ) : (
             <>
               {message.content}
-              <SpeechGenerator
-                voicemodel={uberduckVoice.uuid}
-                text={message.content}
-              />
+              {uberduckVoice?.name && (
+                <SpeechGenerator
+                  voicemodel={uberduckVoice.uuid}
+                  text={message.content}
+                />
+              )}
             </>
           )}
         </div>
