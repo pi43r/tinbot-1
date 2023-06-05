@@ -27,8 +27,21 @@ export const Sidebar: FC<SidebarProps> = (props) => {
         // do nothing for now
       }
     }
+
+    // retrieve the saved state from local storage, if any
+    const savedState = localStorage.getItem('useGoogle')
+    if (savedState !== null) {
+      setUseGoogle(JSON.parse(savedState))
+    }
+
     fetchData()
   }, [])
+
+  // save the state to local storage when the checkbox is clicked
+  useEffect(() => {
+    console.log('google stt', useGoogle)
+    localStorage.setItem('useGoogle', JSON.stringify(useGoogle))
+  }, [useGoogle])
 
   return (
     <div
@@ -45,7 +58,8 @@ export const Sidebar: FC<SidebarProps> = (props) => {
               type="checkbox"
               className="hidden"
               checked={useGoogle}
-              onChange={(e) => setUseGoogle(e.target.checked)}
+              readOnly
+              // onChange={handleUseGoogleChange}
             />
             <label
               htmlFor="useGoogle"
