@@ -2,11 +2,16 @@
 import { useTts } from 'tts-react'
 import type { TTSHookProps } from 'tts-react'
 import { useStore } from '@/utils/store'
+import { useEffect } from 'react'
 
 type SpeakProps = Pick<TTSHookProps, 'children'>
 
 export const Speak = ({ children }: SpeakProps) => {
-  const { setIsGoatTalking, ttsLanguage } = useStore()
+  const { setIsGoatTalking, googleOutputVoice } = useStore()
+
+  useEffect(() => {
+    console.log(googleOutputVoice)
+  }, [googleOutputVoice])
 
   function handleEnd() {
     setIsGoatTalking(false)
@@ -32,7 +37,7 @@ export const Speak = ({ children }: SpeakProps) => {
       {
         useTts({
           children,
-          voice: ttsLanguage,
+          voice: googleOutputVoice,
           autoPlay: true,
           onEnd: handleEnd,
           onError: (msg) => handleError(msg),

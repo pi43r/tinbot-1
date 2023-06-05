@@ -9,7 +9,6 @@ import { useStore } from '@/utils/store'
 import { useEffect, useRef, useState } from 'react'
 import useVoices from '@/utils/hooks/useVoices'
 import { modePrompts } from '@/utils/modes'
-import SpeechGenerator from '@/components/Chat/SpeechGenerator'
 import VoiceClone from '@/components/Chat/VoiceClone'
 
 export default function Home() {
@@ -17,24 +16,9 @@ export default function Home() {
   const [sidebarRight, setSidebarRight] = useState(false)
   const [messages, setMessages] = useState<Message[]>([])
   const [loading, setLoading] = useState<boolean>(false)
-  const {
-    systemPrompt,
-    setSystemPrompt,
-    isGoatTalking,
-    setIsGoatTalking,
-    setVoice,
-    voice,
-    voices,
-    setVoices,
-    mode,
-  } = useStore()
+  const { systemPrompt, setSystemPrompt, setIsGoatTalking, mode } = useStore()
 
-  const fetchedVoices = useVoices()
-
-  useEffect(() => {
-    setVoices(fetchedVoices)
-    setVoice(fetchedVoices[0])
-  }, [fetchedVoices, setVoice, setVoices])
+  useVoices()
 
   const handleSend = async (message: Message) => {
     const updatedMessages = [...messages, message]
@@ -62,81 +46,12 @@ export default function Home() {
     }
     setLoading(false)
     setMessages((messages) => [...messages, result.message])
-
-    /* chat Stream
-    const response = await fetch('/api/chat', { //
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        system: systemPrompt,
-        messages: updatedMessages,
-      }),
-    })
-
-    if (!response.ok) {
-      setLoading(false)
-      throw new Error(response.statusText)
-    }
-
-    const data = response.body
-
-    if (!data) {
-      return
-    }
-
-    setLoading(false)
-
-    const reader = data.getReader()
-    const decoder = new TextDecoder()
-    let done = false
-    let isFirst = true
-
-    while (!done) {
-      const { value, done: doneReading } = await reader.read()
-      done = doneReading
-      const chunkValue = decoder.decode(value)
-
-      if (done) {
-        setIsGoatTalking(false)
-      }
-      if (isFirst) {
-        isFirst = false
-        setMessages((messages) => [
-          ...messages,
-          {
-            role: 'assistant',
-            content: chunkValue,
-          },
-        ])
-      } else {
-        setMessages((messages) => {
-          const lastMessage = messages[messages.length - 1]
-          const updatedMessage = {
-            ...lastMessage,
-            content: lastMessage.content + chunkValue,
-          }
-          return [...messages.slice(0, -1), updatedMessage]
-        })
-      }
-    }
-    UNTIL HERE */
   }
 
   const handleReset = () => {
     setMessages([])
     setIsGoatTalking(false)
   }
-
-  // useEffect(() => {
-  //   setMessages([
-  //     {
-  //       role: 'assistant',
-  //       content: systemPrompt,
-  //     },
-  //   ])
-  // }, [systemPrompt])
 
   useEffect(() => {
     const prompt = modePrompts[mode]

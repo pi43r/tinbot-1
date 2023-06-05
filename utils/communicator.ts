@@ -36,7 +36,7 @@ export class Communicator {
   }
 
   connect() {
-    console.log('Connecting to', this.endpoint)
+    console.warn('Connecting to', this.endpoint)
 
     let ws = new WebSocket(this.endpoint)
     this.ws = ws
@@ -62,7 +62,7 @@ export class Communicator {
 
   publish(topic: string, msg: any, ttl = 0.0) {
     if (this.ws == null) {
-      console.log('WebSocket connection is null')
+      console.warn('WebSocket connection is null')
       return
     }
     let payload = { cmd: 'publish', topic: topic, ttl: ttl, msg: msg }
@@ -71,7 +71,7 @@ export class Communicator {
 
   onWsOpen(event: Event) {
     if (this.ws == null) {
-      console.log('WebSocket connection is null')
+      console.warn('WebSocket connection is null')
       return
     }
     this.eventBus.emit('open')
@@ -85,7 +85,7 @@ export class Communicator {
   }
 
   onWsClose(event: CloseEvent) {
-    console.error('WebSocket Close', event)
+    console.warn('WebSocket Close', event)
     let reason = 'unknown'
 
     if (event.code == 1006) {
@@ -98,13 +98,13 @@ export class Communicator {
     this.eventBus.emit('close', reason)
 
     if (this.reconnectRetryS > 0.1) {
-      console.log('Will reconnect in', this.reconnectRetryS, 'seconds')
+      console.warn('Will reconnect in', this.reconnectRetryS, 'seconds')
       setTimeout((_) => this.connect(), this.reconnectRetryS * 1000.0)
     }
   }
 
   onWsError(event: Event) {
-    // console.log('WebSocket Error', event)
+    // console.warn('WebSocket Error', event)
     return event
   }
 

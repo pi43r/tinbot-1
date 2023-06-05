@@ -10,7 +10,7 @@ interface ListenButtonProps {
 
 const POST_DATA = true
 const ListenButton: FC<ListenButtonProps> = ({ setContent, onSend }) => {
-  const { mode, isGoatTalking, setIsGoatTalking } = useStore()
+  const { mode, isGoatTalking, setIsGoatTalking, minDecibel } = useStore()
   const [result, setResult] = useState<Transcription>({} as Transcription)
   const [isRecording, setIsRecording] = useState(false)
   const [, , startRecording, stopRecording, stream, recorder] = useMic()
@@ -77,7 +77,7 @@ const ListenButton: FC<ListenButtonProps> = ({ setContent, onSend }) => {
     const analyser = audioCtx.createAnalyser()
 
     // https://developer.mozilla.org/en-US/docs/Web/API/AnalyserNode/minDecibels
-    analyser.minDecibels = -60
+    analyser.minDecibels = minDecibel
     // analyser.maxDecibels = -10
     // analyser.smoothingTimeConstant = 0.9
 
@@ -99,7 +99,7 @@ const ListenButton: FC<ListenButtonProps> = ({ setContent, onSend }) => {
         }
         silenceStart = time
       }
-      if (triggered && time - silenceStart > 100) {
+      if (triggered && time - silenceStart > 1500) {
         if (recorder?.state === 'recording') recorder?.stop()
         triggered = false
       }

@@ -2,20 +2,35 @@
 
 import { ChangeEvent, FC, useState, useEffect } from 'react'
 import { useStore } from '@/utils/store'
-import { Voice } from '@/types'
 
-interface PickLanguageProps {}
+export const InputPicker: FC = () => {
+  const { sttLanguage, setSttLanguage, useGoogle } = useStore()
+  const handleInputChange = (event: ChangeEvent<HTMLSelectElement>) => {
+    setSttLanguage(event.target.value)
+  }
 
-const PickLanguageForm: FC<PickLanguageProps> = () => {
-  const {
-    sttLanguage,
-    setSttLanguage,
-    ttsLanguage,
-    setTtsLanguage,
-    useGoogle,
-    voices,
-    setVoice,
-  } = useStore()
+  return (
+    <div className="flex flex-col my-4 text-lg">
+      <label htmlFor="input-picker" className="text-gray-500">
+        language
+      </label>
+      <select
+        name="input-picker"
+        id="input-picker"
+        value={sttLanguage}
+        onChange={handleInputChange}
+        disabled={!useGoogle}
+      >
+        <option value="en">English</option>
+        <option value="de">Deutsch</option>
+      </select>
+    </div>
+  )
+}
+
+export const OutputPicker: FC = () => {
+  const { setGoogleOutputVoice, useGoogle, uberduckVoices, setUberduckVoice } =
+    useStore()
 
   const [outputVoices, setOutputVoices] = useState<SpeechSynthesisVoice[]>([])
 
@@ -30,76 +45,58 @@ const PickLanguageForm: FC<PickLanguageProps> = () => {
     }
   }, [useGoogle])
 
-  const handleSTTLanguage = (event: ChangeEvent<HTMLSelectElement>) => {
-    setSttLanguage(event.target.value)
-  }
-
-  const handleTTSLanguage = (event: ChangeEvent<HTMLSelectElement>) => {
+  const handleUberduckOutputLanguage = (
+    event: ChangeEvent<HTMLSelectElement>
+  ) => {
     const voiceIndex = parseInt(event.target.value)
-    const voice = voices[voiceIndex]
-    setVoice(voice)
+    const voice = uberduckVoices[voiceIndex]
+    setUberduckVoice(voice)
   }
 
-  const handleVoiceChange = (event: ChangeEvent<HTMLSelectElement>) => {
+  const handleGoogleOutputLanguage = (
+    event: ChangeEvent<HTMLSelectElement>
+  ) => {
     const voiceIndex = parseInt(event.target.value)
     const voice = outputVoices[voiceIndex]
-    setTtsLanguage(voice)
+    console.log(voice)
+    setGoogleOutputVoice(voice)
   }
 
   return (
-    <div className="flex items-center justify-around">
-      <div className="mb-2">
-        <label htmlFor="input-picker" className="mr-2">
-          input:
-        </label>
+    <div className="flex flex-col my-4 text-lg">
+      <label htmlFor="output-picker" className="text-gray-400">
+        Voice
+      </label>
+      {useGoogle && (
         <select
-          name="input-picker"
-          id="input-picker"
-          value={sttLanguage}
-          onChange={handleSTTLanguage}
-          disabled={!useGoogle}
+          name="output-picker"
+          id="output-picker"
+          onChange={handleGoogleOutputLanguage}
         >
-          <option value="en">English</option>
-          <option value="de">Deutsch</option>
-        </select>
-      </div>
-      <div className="mb-2">
-        <label htmlFor="output-picker" className="mr-2">
-          output:
-        </label>
-        {useGoogle && (
-          <select
-            name="output-picker"
-            id="output-picker"
-            onChange={handleTTSLanguage}
-          >
-            {outputVoices.length > 0 &&
-              outputVoices.map((voice, index) => (
-                <option
-                  key={voice.lang + index.toString()}
-                  value={index.toString()}
-                >
-                  {voice.voiceURI}
-                </option>
-              ))}
-          </select>
-        )}
-        {!useGoogle && (
-          <select
-            name="output-picker"
-            id="output-picker"
-            onChange={handleVoiceChange}
-          >
-            {voices.map((voice, index) => (
-              <option key={voice.uuid} value={index.toString()}>
-                {voice.name}
+          {outputVoices.length > 0 &&
+            outputVoices.map((voice, index) => (
+              <option
+                key={voice.lang + index.toString()}
+                value={index.toString()}
+              >
+                {voice.voiceURI}
               </option>
             ))}
-          </select>
-        )}
-      </div>
+        </select>
+      )}
+      {!useGoogle && (
+        <select
+          name="output-picker"
+          id="output-picker"
+          onChange={handleUberduckOutputLanguage}
+        >
+          {uberduckVoices.map((voice, index) => (
+            <option key={voice.uuid} value={index.toString()}>
+              {voice.name}
+            </option>
+          ))}
+        </select>
+      )}
     </div>
   )
 }
-
-export default PickLanguageForm

@@ -15,7 +15,7 @@ interface Props {
 }
 
 export const ChatMessage: FC<Props> = ({ message }) => {
-  const { voice, useGoogle } = useStore()
+  const { uberduckVoice, useGoogle } = useStore()
 
   return (
     <div
@@ -33,7 +33,10 @@ export const ChatMessage: FC<Props> = ({ message }) => {
           ) : (
             <>
               {message.content}
-              <SpeechGenerator voicemodel={voice.uuid} text={message.content} />
+              <SpeechGenerator
+                voicemodel={uberduckVoice.uuid}
+                text={message.content}
+              />
             </>
           )}
         </div>

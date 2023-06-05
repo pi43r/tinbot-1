@@ -1,3 +1,5 @@
+import { Mode } from '@/utils/modes'
+
 export enum OpenAIModel {
   DAVINCI_TURBO = 'gpt-3.5-turbo',
 }
@@ -25,4 +27,25 @@ export interface RecordExpand {
 
 export type Transcription = { timestamp: string; text: string }
 
-export type Voice = { name: string; uuid: string }
+export type UberduckVoice = { name: string; uuid: string }
+
+export interface BodyMsg {
+  abstraction: string
+  dance: string
+  speed: string
+  t: string
+}
+
+export interface VoiceMsg {
+  sing: string
+  abstraction: string
+  speed: string
+  loudness: string
+  dialogue: string
+}
+
+export interface ModeMsg {
+  t: string
+  key: Mode
+  description: string
+}

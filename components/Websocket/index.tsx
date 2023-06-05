@@ -2,35 +2,17 @@
 import { useEffect, useRef, useState } from 'react'
 import { Communicator } from '@/utils/communicator'
 import { useStore } from '@/utils/store'
-import { Mode } from '@/utils/modes'
+import { BodyMsg, VoiceMsg, ModeMsg } from '@/types'
 
-interface BodyMsg {
-  abstraction: string
-  dance: string
-  speed: string
-  t: string
-}
-
-interface VoiceMsg {
-  sing: string
-  abstraction: string
-  speed: string
-  loudness: string
-  dialogue: string
-}
-
-interface ModeMsg {
-  t: string
-  key: Mode
-  description: string
-}
+const WS_ENDPOINT = `ws://localhost:8010`
+const SUPERVISOR_ENDPOINT = `http://localhost:9001`
 
 export default function Websocket() {
   const [bodyMessage, setBodyMessage] = useState<BodyMsg | null>(null)
   const [voiceMessage, setVoiceMessage] = useState<VoiceMsg | null>(null)
   const [modeMessage, setModeMessage] = useState<any | null>(null)
   const [error, setError] = useState<any>(null)
-  const { mode, setMode } = useStore()
+  const { mode, setMode, setVoiceMsg } = useStore()
   const [wsEndpoint, setWsEndpoint] = useState<string>(
     () => window.localStorage.getItem('wsEndpoint') || 'ws://localhost:8010'
   )
@@ -63,10 +45,11 @@ export default function Websocket() {
 
     comm.current.subscribe('performance/mode', (message: ModeMsg) => {
       setModeMessage(message)
-      if (mode !== message?.key) {
-        setMode(message?.key)
-      }
+      // if (mode !== message?.key) {
+      //   setMode(message?.key)
+      // }
     })
+
     /*
       Add error handling
       on error is an event that get's returned from here:
@@ -79,17 +62,22 @@ export default function Websocket() {
 
     return () => {
       if (!comm.current) return
-      console.log('closing ' + wsEndpoint)
+      console.warn('closing ' + wsEndpoint)
       comm.current.ws?.close()
     }
   }, [wsEndpoint])
 
   useEffect(() => {
-    if (!modeMessage) return
-    if (mode !== modeMessage.key) {
-      comm.current?.publish('performance/change', { key: mode })
-    }
-  }, [mode, modeMessage])
+    if (!voiceMessage) return
+    setVoiceMsg(voiceMessage)
+  }, [voiceMessage])
+
+  // useEffect(() => {
+  //   if (!modeMessage) return
+  //   if (mode !== modeMessage.key) {
+  //     comm.current?.publish('performance/change', { key: mode })
+  //   }
+  // }, [mode])
 
   function handleDance() {
     if (!comm.current) return
@@ -151,7 +139,7 @@ export default function Websocket() {
           save
         </button>
       </form>
-      <h1 className="text-4xl mb-4">Websocket Test</h1>
+      <h1 className="text-2xl mb-4">Websocket Test</h1>
 
       <h2 className="text-xl font-bold">body</h2>
       {prettyPrint(bodyMessage).map((e, i) => (
