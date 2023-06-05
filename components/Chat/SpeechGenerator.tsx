@@ -29,7 +29,7 @@ const SpeechGenerator: FC<SpeechGeneratorProps> = ({ voicemodel, text }) => {
     const data = await response.json()
     console.log(data)
     const audioUrl = data.audio_url
-
+    setIsGoatTalking(true)
     setSpeech(audioUrl)
   }
 
@@ -46,7 +46,7 @@ const SpeechGenerator: FC<SpeechGeneratorProps> = ({ voicemodel, text }) => {
     })
     const data = await response.blob()
     const audioUrl = URL.createObjectURL(data)
-
+    setIsGoatTalking(true)
     setSpeech(audioUrl)
   }
 
@@ -61,16 +61,30 @@ const SpeechGenerator: FC<SpeechGeneratorProps> = ({ voicemodel, text }) => {
     })
     const data = await response.blob()
     const audioUrl = URL.createObjectURL(data)
+    setIsGoatTalking(true)
+    setSpeech(audioUrl)
+  }
 
+  async function generateSinging() {
+    const response = await fetch('/api/uberduck', {
+      method: 'POST',
+      body: JSON.stringify({
+        pace: 1,
+        voicemodel_uuid: '0e3bb524-9336-4021-b63f-f324d8ecea62',
+        speech: text,
+      }),
+    })
+
+    const data = await response.blob()
+    const audioUrl = URL.createObjectURL(data)
+    setIsGoatTalking(true)
     setSpeech(audioUrl)
   }
 
   useEffect(() => {
-    console.log(mode)
     if (mode == 'dance_slow_sing_slow') {
-      generateRap()
+      generateSinging()
     } else if (mode == 'as_weird_as_it_gets') {
-      console.log('cloone')
       generateVoiceClone()
     } else {
       generateSpeech()
