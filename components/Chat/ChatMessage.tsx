@@ -6,16 +6,16 @@ import Speak from './TextToSpeech'
 import SpeechGenerator from './SpeechGenerator'
 import { useStore } from '@/utils/store'
 
-// const Speak = dynamic(() => import('./TextToSpeech'), {
-//   ssr: false,
-// })
-
 interface Props {
   message: Message
 }
 
 export const ChatMessage: FC<Props> = ({ message }) => {
   const { uberduckVoice, isGoogleOut } = useStore()
+
+  useEffect(() => {
+    console.log(uberduckVoice)
+  }, [uberduckVoice])
 
   return (
     <div
