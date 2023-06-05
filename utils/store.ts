@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import { UberduckVoice, VoiceMsg } from '@/types'
 import { Mode } from './modes'
 
-interface globalStore {
+interface GlobalStore {
   systemPrompt: string
   setSystemPrompt: (prompt: string) => void
   isGoatTalking: boolean
@@ -11,8 +11,10 @@ interface globalStore {
   setSttLanguage: (lang: string) => void
   googleOutputVoice: SpeechSynthesisVoice | undefined
   setGoogleOutputVoice: (voice: SpeechSynthesisVoice | undefined) => void
-  useGoogle: boolean
-  setUseGoogle: (bool: boolean) => void
+  isGoogleIn: boolean
+  setisGoogleIn: (bool: boolean) => void
+  isGoogleOut: boolean
+  setisGoogleOut: (bool: boolean) => void
   uberduckVoice: UberduckVoice
   setUberduckVoice: (voice: UberduckVoice) => void
   uberduckVoices: UberduckVoice[]
@@ -25,29 +27,27 @@ interface globalStore {
   setMinDecibel: (num: number) => void
 }
 
-export const useStore = create<globalStore>()((set) => ({
+export const useStore = create<GlobalStore>()((set) => ({
   systemPrompt: '',
-  setSystemPrompt: (prompt: string) => set(() => ({ systemPrompt: prompt })),
+  setSystemPrompt: (prompt) => set({ systemPrompt: prompt }),
   isGoatTalking: false,
-  setIsGoatTalking: (isTalking: boolean) =>
-    set(() => ({ isGoatTalking: isTalking })),
+  setIsGoatTalking: (isTalking) => set({ isGoatTalking: isTalking }),
   sttLanguage: 'en',
-  setSttLanguage: (lang: string) => set(() => ({ sttLanguage: lang })),
+  setSttLanguage: (lang) => set({ sttLanguage: lang }),
   googleOutputVoice: undefined,
-  setGoogleOutputVoice: (voice: SpeechSynthesisVoice | undefined) =>
-    set(() => ({ googleOutputVoice: voice })),
-  useGoogle: true,
-  setUseGoogle: (bool: boolean) => set(() => ({ useGoogle: bool })),
-  uberduckVoice: { name: '', uuid: '' },
-  setUberduckVoice: (voice: UberduckVoice) =>
-    set(() => ({ uberduckVoice: voice })),
+  setGoogleOutputVoice: (voice) => set({ googleOutputVoice: voice }),
+  isGoogleIn: true,
+  setisGoogleIn: (bool) => set({ isGoogleIn: bool }),
+  isGoogleOut: true,
+  setisGoogleOut: (bool) => set({ isGoogleOut: bool }),
+  uberduckVoice: {} as UberduckVoice,
+  setUberduckVoice: (voice) => set({ uberduckVoice: voice }),
   uberduckVoices: [],
-  setUberduckVoices: (arr: UberduckVoice[]) =>
-    set(() => ({ uberduckVoices: arr })),
+  setUberduckVoices: (arr) => set({ uberduckVoices: arr }),
   mode: 'idle',
-  setMode: (str: Mode) => set(() => ({ mode: str })),
+  setMode: (str) => set({ mode: str }),
   voiceMsg: {} as VoiceMsg,
-  setVoiceMsg: (msg: VoiceMsg) => set(() => ({ voiceMsg: msg })),
+  setVoiceMsg: (msg) => set({ voiceMsg: msg }),
   minDecibel: -60,
-  setMinDecibel: (num: number) => set(() => ({ minDecibel: num })),
+  setMinDecibel: (num) => set({ minDecibel: num }),
 }))

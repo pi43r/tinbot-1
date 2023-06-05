@@ -14,7 +14,7 @@ interface SidebarProps {
 export const Sidebar: FC<SidebarProps> = (props) => {
   const { visible } = props
   const [records, setRecords] = useState<Record[]>([])
-  const { useGoogle, setUseGoogle } = useStore()
+  const { isGoogleIn, setisGoogleIn, isGoogleOut, setisGoogleOut } = useStore()
 
   useEffect(() => {
     const fetchData = async () => {
@@ -28,21 +28,29 @@ export const Sidebar: FC<SidebarProps> = (props) => {
       }
     }
 
-    // retrieve the saved state from local storage, if any
-    const savedState = localStorage.getItem('useGoogle')
-    if (savedState !== null) {
-      setUseGoogle(JSON.parse(savedState))
+    // retrieve the saved state of isGoogleIn from local storage, if any
+    const savedStateIn = localStorage.getItem('isGoogleIn')
+    if (savedStateIn !== null) {
+      setisGoogleIn(JSON.parse(savedStateIn))
+    }
+
+    // retrieve the saved state of isGoogleOut from local storage, if any
+    const savedStateOut = localStorage.getItem('isGoogleOut')
+    if (savedStateOut !== null) {
+      setisGoogleOut(JSON.parse(savedStateOut))
     }
 
     fetchData()
   }, [])
 
-  // save the state to local storage when the checkbox is clicked
+  // save the state of isGoogleIn and isGoogleOut to local storage when the checkbox is clicked
   useEffect(() => {
-    console.log('google stt', useGoogle)
-    localStorage.setItem('useGoogle', JSON.stringify(useGoogle))
-  }, [useGoogle])
+    localStorage.setItem('isGoogleIn', JSON.stringify(isGoogleIn))
+  }, [isGoogleIn])
 
+  useEffect(() => {
+    localStorage.setItem('isGoogleOut', JSON.stringify(isGoogleOut))
+  }, [isGoogleOut])
   return (
     <div
       className={`z-10 absolute md:relative h-full w-full md:w-1/3 md:min-w-[300px] border border-gray-300 bg-white transition -translate-x-full 
@@ -53,28 +61,16 @@ export const Sidebar: FC<SidebarProps> = (props) => {
       <div className="w-full grid grid-cols-2 md:grid-cols-1 xl:grid-cols-2 gap-4">
         <div className="flex flex-col align-center p-4 overflow-y-auto">
           <h4 className="bold text-center m-4">input</h4>
-          <div className="flex mx-auto items-center">
-            <input
-              type="checkbox"
-              className="hidden"
-              checked={useGoogle}
-              readOnly
-              // onChange={handleUseGoogleChange}
-            />
-            <label
-              htmlFor="useGoogle"
-              className={`border rounded-lg p-1 cursor-pointer ${
-                useGoogle ? 'bg-blue-500 text-white' : 'bg-gray-200'
-              }`}
-              onClick={() => setUseGoogle(!useGoogle)}
-            >
-              {useGoogle ? 'use whisper' : 'use google'}
-            </label>
-          </div>
+          <Toggle setBool={setisGoogleIn} bool={isGoogleIn} id="inputSwitch">
+            {isGoogleIn ? 'use whisper' : 'use google'}
+          </Toggle>
           <InputPicker />
         </div>
         <div className="flex flex-col align-center p-4 overflow-y-auto">
-          <h4 className="bold text-center m-4">input</h4>
+          <h4 className="bold text-center m-4">output</h4>
+          <Toggle setBool={setisGoogleOut} bool={isGoogleOut} id="inputSwitch">
+            {isGoogleOut ? 'use uberduck' : 'use google'}
+          </Toggle>
           <OutputPicker />
         </div>
       </div>
@@ -100,6 +96,30 @@ export const Sidebar: FC<SidebarProps> = (props) => {
           records={records}
           setRecords={setRecords}
         /> */}
+    </div>
+  )
+}
+
+interface ToggleProps {
+  setBool: (bool: boolean) => void
+  bool: boolean
+  id: string
+  children: string
+}
+
+export const Toggle: FC<ToggleProps> = ({ setBool, bool, id, children }) => {
+  return (
+    <div className="flex mx-auto items-center">
+      <input type="checkbox" className="hidden" checked={bool} readOnly />
+      <label
+        htmlFor="useGoogle"
+        className={`border rounded-lg p-1 cursor-pointer ${
+          bool ? 'bg-blue-500 text-white' : 'bg-gray-200'
+        }`}
+        onClick={() => setBool(!bool)}
+      >
+        {children}
+      </label>
     </div>
   )
 }

@@ -10,7 +10,7 @@ interface Props {
 }
 
 export const ChatInput: FC<Props> = ({ onSend }) => {
-  const { useGoogle } = useStore()
+  const { isGoogleIn } = useStore()
   const [content, setContent] = useState<string>('')
 
   const textareaRef = useRef<HTMLTextAreaElement>(null)
@@ -65,7 +65,7 @@ export const ChatInput: FC<Props> = ({ onSend }) => {
         onKeyDown={handleKeyDown}
       />
       <div className="flex justify-between">
-        {useGoogle ? (
+        {isGoogleIn ? (
           <ListenButtonGoogle
             content={content}
             setContent={setContent}

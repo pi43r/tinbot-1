@@ -13,7 +13,7 @@ import { useStore } from '@/utils/store'
 import useVoices from '@/utils/hooks/useVoices'
 
 export const InputPicker: FC = () => {
-  const { sttLanguage, setSttLanguage, useGoogle } = useStore()
+  const { sttLanguage, setSttLanguage, isGoogleIn } = useStore()
   const handleInputChange = (event: ChangeEvent<HTMLSelectElement>) => {
     const selectedLanguage = event.target.value
     setSttLanguage(selectedLanguage)
@@ -38,7 +38,7 @@ export const InputPicker: FC = () => {
         id="input-picker"
         value={sttLanguage}
         onChange={handleInputChange}
-        disabled={!useGoogle}
+        disabled={!isGoogleIn}
       >
         <option value="en">English</option>
         <option value="de">Deutsch</option>
@@ -48,7 +48,7 @@ export const InputPicker: FC = () => {
 }
 
 export const OutputPicker: FC = () => {
-  const { useGoogle } = useStore()
+  const { isGoogleOut } = useStore()
 
   return (
     <div className="flex flex-col my-4 text-lg">
@@ -56,9 +56,9 @@ export const OutputPicker: FC = () => {
         Voice
       </label>
 
-      {useGoogle && <GoogleOutputPicker />}
+      {isGoogleOut && <GoogleOutputPicker />}
 
-      {!useGoogle && <UberduckOutputPicker />}
+      {!isGoogleOut && <UberduckOutputPicker />}
     </div>
   )
 }
@@ -109,7 +109,7 @@ const UberduckOutputPicker: FC = () => {
 }
 
 const GoogleOutputPicker: FC = () => {
-  const { googleOutputVoice, setGoogleOutputVoice, useGoogle } = useStore()
+  const { googleOutputVoice, setGoogleOutputVoice } = useStore()
   const [googleVoices, setGoogleVoices] = useState<SpeechSynthesisVoice[]>([])
   const googleOutputPickerRef = useRef<HTMLSelectElement>(null)
 

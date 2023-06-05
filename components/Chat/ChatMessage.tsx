@@ -15,7 +15,7 @@ interface Props {
 }
 
 export const ChatMessage: FC<Props> = ({ message }) => {
-  const { uberduckVoice, useGoogle } = useStore()
+  const { uberduckVoice, isGoogleOut } = useStore()
 
   return (
     <div
@@ -28,7 +28,7 @@ export const ChatMessage: FC<Props> = ({ message }) => {
           className="flex items-center bg-neutral-200 text-neutral-900 rounded-2xl px-3 py-2 max-w-[67%] whitespace-pre-wrap"
           style={{ overflowWrap: 'anywhere' }}
         >
-          {useGoogle ? (
+          {isGoogleOut ? (
             <Speak>{message.content}</Speak>
           ) : (
             <>
