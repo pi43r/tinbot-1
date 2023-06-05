@@ -65,6 +65,7 @@ export const Sidebar: FC<SidebarProps> = (props) => {
             {isGoogleIn ? 'use whisper' : 'use google'}
           </Toggle>
           <InputPicker />
+          {!isGoogleIn && <DecibelForm />}
         </div>
         <div className="flex flex-col align-center p-4 overflow-y-auto">
           <h4 className="bold text-center m-4">output</h4>
@@ -107,7 +108,7 @@ interface ToggleProps {
   children: string
 }
 
-export const Toggle: FC<ToggleProps> = ({ setBool, bool, id, children }) => {
+const Toggle: FC<ToggleProps> = ({ setBool, bool, id, children }) => {
   return (
     <div className="flex mx-auto items-center">
       <input type="checkbox" className="hidden" checked={bool} readOnly />
@@ -120,6 +121,33 @@ export const Toggle: FC<ToggleProps> = ({ setBool, bool, id, children }) => {
       >
         {children}
       </label>
+    </div>
+  )
+}
+
+const DecibelForm: FC = () => {
+  const { minDecibel, setMinDecibel } = useStore()
+
+  const handleSliderChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setMinDecibel(Number(event.target.value))
+  }
+
+  return (
+    <div>
+      <label className="text-gray" htmlFor="decibel-slider">
+        min decibel
+      </label>
+      <input
+        className="w-full"
+        id="decibel-slider"
+        type="range"
+        min="-120"
+        max="0"
+        step="1"
+        value={minDecibel}
+        onChange={handleSliderChange}
+      />
+      {minDecibel}
     </div>
   )
 }

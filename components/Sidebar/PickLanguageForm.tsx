@@ -70,17 +70,26 @@ const UberduckOutputPicker: FC = () => {
 
   // handle Uberduck
   useEffect(() => {
-    if (!uberduckVoice) return
-    if (!uberduckVoice?.name) {
+    if (uberduckVoices.length > 0 && !uberduckVoice?.name) {
       setUberduckVoice(uberduckVoices[0])
       return
     }
+    if (!uberduckVoice) return
     if (uberduckOutputPickerRef.current) {
-      const value = uberduckVoice?.name
+      const value = uberduckVoice.name
       const index = uberduckVoices.findIndex((voice) => voice.name === value)
       uberduckOutputPickerRef.current.selectedIndex = index
     }
   }, [setUberduckVoice, uberduckVoice, uberduckVoices])
+
+  useEffect(() => {
+    // first get and set from storage
+    const localUber = localStorage.getItem('uberduckVoice')
+    if (localUber) {
+      const voice = JSON.parse(localUber)
+      setUberduckVoice(voice)
+    }
+  }, [])
 
   const handleUberduckOutputLanguage = useCallback(
     (event: React.ChangeEvent<HTMLSelectElement>): void => {
