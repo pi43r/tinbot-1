@@ -133,7 +133,7 @@ const AskingGoat: FC<AskingGoatProps> = ({ handleSend }) => {
   }, [isGoatTalking, handleSend])
 
   useEffect(() => {
-    const interval = setInterval(intervalFunction, 9000)
+    const interval = setInterval(intervalFunction, 90000)
 
     return () => clearInterval(interval)
   }, [intervalFunction])

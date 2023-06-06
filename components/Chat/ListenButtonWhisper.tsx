@@ -1,4 +1,5 @@
 import { FC, Dispatch, useCallback, useEffect, useRef, useState } from 'react'
+//@ts-ignore
 import { IconMicrophone, IconMicrophoneOff } from '@tabler/icons-react'
 import { Message, Transcription } from '@/types'
 import { useStore } from '@/utils/store'
@@ -23,7 +24,7 @@ const ListenButtonWhisper: FC<ListenButtonProps> = ({ setContent, onSend }) => {
   ] = useMic()
   const requestAnimationId = useRef<number>()
 
-  const recStartModes = new Set(['walking_chatting', 'walking_hectic_asking'])
+  const recStartModes = new Set(['walking_chatting'])
   useEffect(() => {
     const shouldRecord = recStartModes.has(mode)
 

@@ -4,6 +4,7 @@ import SpeechRecognition, {
 } from 'react-speech-recognition'
 
 import { FC, useEffect, useState, Dispatch } from 'react'
+//@ts-ignore
 import { IconMicrophone, IconMicrophoneOff } from '@tabler/icons-react'
 import { useStore } from '@/utils/store'
 
@@ -21,7 +22,7 @@ const SpeechToText: FC<SpeechRecognitionProps> = ({ result, setResult }) => {
   const { mode, isGoatTalking, setIsGoatTalking, sttLanguage } = useStore()
   const [isListeningActive, setIsListeningActive] = useState(false)
 
-  const recStartModes = new Set(['walking_chatting', 'walking_hectic_asking'])
+  const recStartModes = new Set(['walking_chatting'])
   useEffect(() => {
     const shouldRecord = recStartModes.has(mode)
 
