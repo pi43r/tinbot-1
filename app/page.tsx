@@ -7,7 +7,6 @@ import { SidebarRight } from '@/components/Layout/SidebarRight'
 import { Message } from '@/types'
 import { useStore } from '@/utils/store'
 import { FC, useCallback, useEffect, useRef, useState } from 'react'
-import useVoices from '@/utils/hooks/useVoices'
 import { modePrompts } from '@/utils/modes'
 import VoiceClone from '@/components/Chat/VoiceClone'
 
