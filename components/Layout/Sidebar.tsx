@@ -61,17 +61,25 @@ export const Sidebar: FC<SidebarProps> = (props) => {
       <div className="w-full grid grid-cols-2 md:grid-cols-1 xl:grid-cols-2 gap-4">
         <div className="flex flex-col align-center p-4 overflow-y-auto">
           <h4 className="bold text-center m-4">input</h4>
-          <Toggle setBool={setisGoogleIn} bool={isGoogleIn} id="inputSwitch">
-            {isGoogleIn ? 'use whisper' : 'use google'}
-          </Toggle>
+          <Toggle
+            setBool={setisGoogleIn}
+            bool={isGoogleIn}
+            id="inputSwitch"
+            label1="google"
+            label2="whisper"
+          />
           <InputPicker />
           {!isGoogleIn && <DecibelForm />}
         </div>
         <div className="flex flex-col align-center p-4 overflow-y-auto">
           <h4 className="bold text-center m-4">output</h4>
-          <Toggle setBool={setisGoogleOut} bool={isGoogleOut} id="inputSwitch">
-            {isGoogleOut ? 'use uberduck' : 'use google'}
-          </Toggle>
+          <Toggle
+            setBool={setisGoogleOut}
+            bool={isGoogleOut}
+            id="inputSwitch"
+            label1="google"
+            label2="uberduck"
+          />
           <OutputPicker />
         </div>
       </div>
@@ -105,22 +113,27 @@ interface ToggleProps {
   setBool: (bool: boolean) => void
   bool: boolean
   id: string
-  children: string
+  label1: string
+  label2: string
 }
 
-const Toggle: FC<ToggleProps> = ({ setBool, bool, id, children }) => {
+const Toggle: FC<ToggleProps> = ({ setBool, bool, id, label1, label2 }) => {
+  const commonStyles = `border cursor-pointer outline-none h-full flex-1 p-2 text-md`
+  const leftStyles = `${commonStyles} rounded-l-md ${
+    bool ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-600'
+  }`
+  const rightStyles = `${commonStyles} rounded-r-md ${
+    !bool ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-600'
+  }`
+
   return (
-    <div className="flex mx-auto items-center">
-      <input type="checkbox" className="hidden" checked={bool} readOnly />
-      <label
-        htmlFor="useGoogle"
-        className={`border rounded-lg p-1 cursor-pointer ${
-          bool ? 'bg-blue-500 text-white' : 'bg-gray-200'
-        }`}
-        onClick={() => setBool(!bool)}
-      >
-        {children}
-      </label>
+    <div className="flex items-center border overflow-hidden rounded-md">
+      <button className={leftStyles} onClick={() => setBool(true)}>
+        {label1}
+      </button>
+      <button className={rightStyles} onClick={() => setBool(false)}>
+        {label2}
+      </button>
     </div>
   )
 }
@@ -143,9 +156,10 @@ const DecibelForm: FC = () => {
 
   return (
     <div>
-      <label className="text-gray" htmlFor="decibel-slider">
+      <label className="w-full text-gray" htmlFor="decibel-slider">
         min decibel
       </label>
+      <span className="ml-4 text-end">[{minDecibel}]</span>
       <input
         className="w-full"
         id="decibel-slider"
@@ -156,7 +170,7 @@ const DecibelForm: FC = () => {
         value={minDecibel}
         onChange={handleSliderChange}
       />
-      {minDecibel}
+      <span className="text-xs text-gray-400">refresh page to take effect</span>
     </div>
   )
 }

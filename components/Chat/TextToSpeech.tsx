@@ -9,10 +9,6 @@ type SpeakProps = Pick<TTSHookProps, 'children'>
 export const Speak = ({ children }: SpeakProps) => {
   const { setIsGoatTalking, googleOutputVoice, sttLanguage } = useStore()
 
-  useEffect(() => {
-    console.log(googleOutputVoice)
-  }, [googleOutputVoice])
-
   function handleEnd() {
     setIsGoatTalking(false)
   }
@@ -38,7 +34,7 @@ export const Speak = ({ children }: SpeakProps) => {
         useTts({
           children,
           lang: sttLanguage,
-          // voice: googleOutputVoice,
+          voice: googleOutputVoice,
           autoPlay: true,
           onEnd: handleEnd,
           onError: (msg) => handleError(msg),

@@ -34,6 +34,7 @@ export const InputPicker: FC = () => {
         language
       </label>
       <select
+        className="p-2"
         name="input-picker"
         id="input-picker"
         value={sttLanguage}
@@ -56,7 +57,7 @@ export const OutputPicker: FC = () => {
         Voice
       </label>
 
-      {/* {isGoogleOut && <GoogleOutputPicker />} */}
+      {isGoogleOut && <GoogleOutputPicker />}
 
       {!isGoogleOut && <UberduckOutputPicker />}
     </div>
@@ -103,6 +104,7 @@ const UberduckOutputPicker: FC = () => {
 
   return (
     <select
+      className="p-2"
       name="output-picker"
       id="output-picker"
       ref={uberduckOutputPickerRef}
@@ -186,17 +188,23 @@ const GoogleOutputPicker: FC = () => {
   )
 
   return (
-    <select
-      name="output-picker"
-      id="output-picker"
-      ref={googleOutputPickerRef}
-      onChange={handleGoogleOutputLanguage}
-    >
-      {googleVoices.map((voice, index) => (
-        <option key={voice.lang + index} value={index}>
-          {voice.voiceURI}
-        </option>
-      ))}
-    </select>
+    <>
+      <select
+        className="p-2"
+        name="output-picker"
+        id="output-picker"
+        ref={googleOutputPickerRef}
+        onChange={handleGoogleOutputLanguage}
+      >
+        {googleVoices.map((voice, index) => (
+          <option key={voice.lang + index} value={index}>
+            {voice.voiceURI}
+          </option>
+        ))}
+      </select>
+      <span className="text-xs text-gray-400">
+        does not work on my phone. Input Language changes the voice
+      </span>
+    </>
   )
 }

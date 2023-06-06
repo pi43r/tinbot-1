@@ -13,10 +13,6 @@ interface Props {
 export const ChatMessage: FC<Props> = ({ message }) => {
   const { uberduckVoice, isGoogleOut } = useStore()
 
-  useEffect(() => {
-    console.log(uberduckVoice)
-  }, [uberduckVoice])
-
   return (
     <div
       className={`flex flex-col ${
