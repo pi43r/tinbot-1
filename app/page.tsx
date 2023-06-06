@@ -6,7 +6,7 @@ import { Sidebar } from '@/components/Layout/Sidebar'
 import { SidebarRight } from '@/components/Layout/SidebarRight'
 import { Message } from '@/types'
 import { useStore } from '@/utils/store'
-import { useEffect, useRef, useState } from 'react'
+import { FC, useCallback, useEffect, useRef, useState } from 'react'
 import useVoices from '@/utils/hooks/useVoices'
 import { modePrompts } from '@/utils/modes'
 import VoiceClone from '@/components/Chat/VoiceClone'
@@ -16,7 +16,13 @@ export default function Home() {
   const [sidebarRight, setSidebarRight] = useState(false)
   const [messages, setMessages] = useState<Message[]>([])
   const [loading, setLoading] = useState<boolean>(false)
-  const { systemPrompt, setSystemPrompt, setIsGoatTalking, mode } = useStore()
+  const {
+    systemPrompt,
+    setSystemPrompt,
+    setIsGoatTalking,
+    isGoatTalking,
+    mode,
+  } = useStore()
 
   const handleSend = async (message: Message) => {
     const updatedMessages = [...messages, message]
@@ -80,8 +86,100 @@ export default function Home() {
           </div>
           <SidebarRight visible={sidebarRight} />
         </div>
+        {mode === 'dance_slow_sing_slow' && (
+          <SingingGoat handleSend={handleSend} />
+        )}
+        {mode === 'speech_abstract' && <NonsenseGoat handleSend={handleSend} />}
+        {mode === 'walking_hectic_asking' && (
+          <AskingGoat handleSend={handleSend} />
+        )}
         <Footer />
       </div>
     </>
   )
+}
+
+interface SingingGoatProps {
+  handleSend: (message: Message) => void
+}
+const SingingGoat: FC<SingingGoatProps> = ({ handleSend }) => {
+  const { mode, isGoatTalking, systemPrompt } = useStore()
+
+  const intervalFunction = useCallback(() => {
+    if (isGoatTalking) return
+    handleSend({ role: 'user', content: 'sing a song :)' })
+  }, [isGoatTalking, handleSend])
+
+  useEffect(() => {
+    const interval = setInterval(intervalFunction, 1000)
+
+    return () => clearInterval(interval)
+  }, [intervalFunction])
+
+  return null
+}
+
+interface AskingGoatProps {
+  handleSend: (message: Message) => void
+}
+const AskingGoat: FC<AskingGoatProps> = ({ handleSend }) => {
+  const { mode, isGoatTalking, systemPrompt } = useStore()
+
+  const intervalFunction = useCallback(() => {
+    if (isGoatTalking) return
+    handleSend({
+      role: 'user',
+      content: 'ask me a weird question',
+    })
+  }, [isGoatTalking, handleSend])
+
+  useEffect(() => {
+    const interval = setInterval(intervalFunction, 9000)
+
+    return () => clearInterval(interval)
+  }, [intervalFunction])
+
+  return null
+}
+
+interface NonsenseGoatProps {
+  handleSend: (message: Message) => void
+}
+const NonsenseGoat: FC<NonsenseGoatProps> = ({ handleSend }) => {
+  const { mode, isGoatTalking, systemPrompt } = useStore()
+
+  function generateRandomString(length: number) {
+    let result = ''
+    const characters = 'abcdefghijklmnopqrstuvwxyz'
+    const charactersLength = characters.length
+    for (let i = 0; i < length; i++) {
+      // randomly select a character and append it to the result string
+      result += characters.charAt(Math.floor(Math.random() * charactersLength))
+    }
+    return result.charAt(0).toUpperCase() + result.slice(1) // capitalize the first letter
+  }
+
+  function generateRandomWords(numWords: number) {
+    let words = []
+    for (let i = 0; i < numWords; i++) {
+      words.push(generateRandomString(Math.ceil(Math.random() * 5))) // generate a word of length 5
+    }
+    return words.join(' ') // concatenate words with space
+  }
+
+  const intervalFunction = useCallback(() => {
+    if (isGoatTalking) return
+    handleSend({
+      role: 'user',
+      content: generateRandomWords(Math.ceil(Math.random() * 12)),
+    })
+  }, [isGoatTalking, handleSend])
+
+  useEffect(() => {
+    const interval = setInterval(intervalFunction, 1000)
+
+    return () => clearInterval(interval)
+  }, [intervalFunction])
+
+  return null
 }

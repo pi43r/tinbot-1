@@ -1,4 +1,5 @@
 import { Message } from '@/types'
+//@ts-ignore
 import { IconSend } from '@tabler/icons-react'
 import { FC, KeyboardEvent, useEffect, useRef, useState } from 'react'
 import ListenButtonGoogle from './ListenButtonGoogle'
