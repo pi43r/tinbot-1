@@ -2,7 +2,7 @@ import { Message } from '@/types'
 import { IconSend } from '@tabler/icons-react'
 import { FC, KeyboardEvent, useEffect, useRef, useState } from 'react'
 import ListenButtonGoogle from './ListenButtonGoogle'
-import ListenButton from './ListenButton'
+import ListenButtonWhisper from './ListenButtonWhisper'
 import { useStore } from '@/utils/store'
 
 interface Props {
@@ -73,7 +73,7 @@ export const ChatInput: FC<Props> = ({ onSend }) => {
             handleSend={handleSend}
           />
         ) : (
-          <ListenButton onSend={onSend} setContent={setContent} />
+          <ListenButtonWhisper onSend={onSend} setContent={setContent} />
         )}
         <button onClick={() => handleSend()}>
           <IconSend className="m-1 mt-0 w-12 h-12 hover:cursor-pointer rounded-full p-1 bg-blue-500 text-white hover:opacity-80" />

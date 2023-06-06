@@ -129,8 +129,17 @@ const DecibelForm: FC = () => {
   const { minDecibel, setMinDecibel } = useStore()
 
   const handleSliderChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setMinDecibel(Number(event.target.value))
+    const value = Number(event.target.value)
+    setMinDecibel(value)
+    localStorage.setItem('minDecibel', JSON.stringify(value))
   }
+
+  useEffect(() => {
+    const storedValue = localStorage.getItem('minDecibel')
+    if (storedValue !== null) {
+      setMinDecibel(JSON.parse(storedValue))
+    }
+  }, [])
 
   return (
     <div>
@@ -142,7 +151,7 @@ const DecibelForm: FC = () => {
         id="decibel-slider"
         type="range"
         min="-120"
-        max="0"
+        max="-31"
         step="1"
         value={minDecibel}
         onChange={handleSliderChange}

@@ -9,11 +9,18 @@ interface ListenButtonProps {
 }
 
 const POST_DATA = true
-const ListenButton: FC<ListenButtonProps> = ({ setContent, onSend }) => {
+const ListenButtonWhisper: FC<ListenButtonProps> = ({ setContent, onSend }) => {
   const { mode, isGoatTalking, setIsGoatTalking, minDecibel } = useStore()
   const [result, setResult] = useState<Transcription>({} as Transcription)
   const [isRecording, setIsRecording] = useState(false)
-  const [, , startRecording, stopRecording, stream, recorder] = useMic()
+  const [
+    startMicrophone,
+    stopMicrophone,
+    startRecording,
+    stopRecording,
+    stream,
+    recorder,
+  ] = useMic()
   const requestAnimationId = useRef<number>()
 
   const recStartModes = new Set(['walking_chatting', 'walking_hectic_asking'])
@@ -148,8 +155,7 @@ const ListenButton: FC<ListenButtonProps> = ({ setContent, onSend }) => {
   }
 
   useEffect(() => {
-    console.log('Goat talking', isGoatTalking)
-    console.log('recording', isRecording)
+    console.log({ isGoatTalking, isRecording })
     if (isGoatTalking && isRecording) handleStop()
     if (!isGoatTalking && isRecording) handleStart()
   }, [isGoatTalking])
@@ -183,7 +189,7 @@ const ListenButton: FC<ListenButtonProps> = ({ setContent, onSend }) => {
   )
 }
 
-export default ListenButton
+export default ListenButtonWhisper
 
 function useMic(): [
   Function,
@@ -217,6 +223,9 @@ function useMic(): [
 
   const startRecording = (callback: (ev: BlobEvent) => void) => {
     if (!recorder.current) return
+    if (recorder.current.state === 'recording') {
+      recorder.current.stop()
+    }
     recorder.current.ondataavailable = callback
     recorder.current.start()
   }
@@ -229,6 +238,8 @@ function useMic(): [
 
   useEffect(() => {
     startMicrophone()
+
+    return () => stopMicrophone()
   }, [])
 
   return [

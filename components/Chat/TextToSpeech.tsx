@@ -7,7 +7,7 @@ import { useEffect } from 'react'
 type SpeakProps = Pick<TTSHookProps, 'children'>
 
 export const Speak = ({ children }: SpeakProps) => {
-  const { setIsGoatTalking, googleOutputVoice } = useStore()
+  const { setIsGoatTalking, googleOutputVoice, sttLanguage } = useStore()
 
   useEffect(() => {
     console.log(googleOutputVoice)
@@ -37,7 +37,8 @@ export const Speak = ({ children }: SpeakProps) => {
       {
         useTts({
           children,
-          voice: googleOutputVoice,
+          lang: sttLanguage,
+          // voice: googleOutputVoice,
           autoPlay: true,
           onEnd: handleEnd,
           onError: (msg) => handleError(msg),
