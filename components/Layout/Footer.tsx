@@ -32,7 +32,7 @@ export const Footer: FC = () => {
       newMode = 'walking_chatting'
     } else if (parseFloat(loudness) > 0.9 && parseFloat(speed) > 0.7) {
       newMode = 'walking_hectic_asking'
-    } else if (parseFloat(sing) > 0.5) {
+    } else if (parseFloat(sing) > 0.3) {
       newMode = 'dance_slow_sing_slow'
     } else if (parseFloat(abstraction) > 0.4 && parseFloat(dialogue) > 0.8) {
       newMode = 'speech_abstract'
