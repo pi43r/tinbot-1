@@ -4,6 +4,7 @@ import {
   IconPlugConnected,
   IconDeviceTablet,
   IconDeviceTabletFilled,
+  //@ts-ignore
 } from '@tabler/icons-react'
 import Link from 'next/link'
 import { FC, useRef, useState, useEffect } from 'react'
@@ -19,6 +20,7 @@ interface NavbarProps {
 export const Navbar: FC<NavbarProps> = (props) => {
   const { sidebar, setSidebar, sidebarRight, setSidebarRight } = props
 
+  const { isGoatTalking } = useStore()
   const isClient = useIsClient()
 
   return (
@@ -29,7 +31,7 @@ export const Navbar: FC<NavbarProps> = (props) => {
       />
       <div className="font-bold text-3xl flex items-center m-auto">
         <Link className="ml-2 hover:opacity-50" href="/">
-          GOAT
+          G{isGoatTalking ? '💬' : 'O'}AT
         </Link>
       </div>
       <div className="flex">
@@ -44,6 +46,7 @@ export const Navbar: FC<NavbarProps> = (props) => {
 }
 
 import { useWakeLock } from 'react-screen-wake-lock'
+import { useStore } from '@/utils/store'
 const ScreenAwakeToggle: FC = () => {
   const { isSupported, released, request, release } = useWakeLock({
     onRequest: () => console.log('Screen Wake Lock: requested!'),

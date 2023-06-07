@@ -7,7 +7,7 @@ import { SidebarRight } from '@/components/Layout/SidebarRight'
 import { Message } from '@/types'
 import { useStore } from '@/utils/store'
 import { FC, useCallback, useEffect, useRef, useState } from 'react'
-import { modePrompts } from '@/utils/modes'
+import { modePrompts, Mode } from '@/utils/modes'
 import VoiceClone from '@/components/Chat/VoiceClone'
 
 export default function Home() {
@@ -57,95 +57,12 @@ export default function Home() {
   }
 
   useEffect(() => {
+    console.log(mode)
     const prompt = modePrompts[mode]
     if (prompt) {
       setSystemPrompt(prompt)
     }
   }, [mode, setSystemPrompt])
-
-  return (
-    <>
-      <div className="flex flex-col chat-container">
-        <Navbar
-          setSidebar={setSidebar}
-          sidebar={sidebar}
-          setSidebarRight={setSidebarRight}
-          sidebarRight={sidebarRight}
-        />
-        <div className="relative h-full flex flex-row overflow-hidden">
-          <Sidebar visible={sidebar} />
-          <div className="max-w-[800px] mt-1 mx-auto">
-            {mode === 'as_weird_as_it_gets' && <VoiceClone />}
-            <Chat
-              messages={messages}
-              loading={loading}
-              onSend={handleSend}
-              onReset={handleReset}
-            />
-          </div>
-          <SidebarRight visible={sidebarRight} />
-        </div>
-        {mode === 'dance_slow_sing_slow' && (
-          <SingingGoat handleSend={handleSend} />
-        )}
-        {mode === 'speech_abstract' && <NonsenseGoat handleSend={handleSend} />}
-        {mode === 'walking_hectic_asking' && (
-          <AskingGoat handleSend={handleSend} />
-        )}
-        <Footer />
-      </div>
-    </>
-  )
-}
-
-interface SingingGoatProps {
-  handleSend: (message: Message) => void
-}
-const SingingGoat: FC<SingingGoatProps> = ({ handleSend }) => {
-  const { mode, isGoatTalking, systemPrompt } = useStore()
-
-  const intervalFunction = useCallback(() => {
-    if (isGoatTalking) return
-    handleSend({ role: 'user', content: 'sing a song :)' })
-  }, [isGoatTalking, handleSend])
-
-  useEffect(() => {
-    const interval = setInterval(intervalFunction, 1000)
-
-    return () => clearInterval(interval)
-  }, [intervalFunction])
-
-  return null
-}
-
-interface AskingGoatProps {
-  handleSend: (message: Message) => void
-}
-const AskingGoat: FC<AskingGoatProps> = ({ handleSend }) => {
-  const { mode, isGoatTalking, systemPrompt } = useStore()
-
-  const intervalFunction = useCallback(() => {
-    if (isGoatTalking) return
-    handleSend({
-      role: 'user',
-      content: 'ask me a weird question',
-    })
-  }, [isGoatTalking, handleSend])
-
-  useEffect(() => {
-    const interval = setInterval(intervalFunction, 90000)
-
-    return () => clearInterval(interval)
-  }, [intervalFunction])
-
-  return null
-}
-
-interface NonsenseGoatProps {
-  handleSend: (message: Message) => void
-}
-const NonsenseGoat: FC<NonsenseGoatProps> = ({ handleSend }) => {
-  const { mode, isGoatTalking, systemPrompt } = useStore()
 
   function generateRandomString(length: number) {
     let result = ''
@@ -166,19 +83,89 @@ const NonsenseGoat: FC<NonsenseGoatProps> = ({ handleSend }) => {
     return words.join(' ') // concatenate words with space
   }
 
-  const intervalFunction = useCallback(() => {
-    if (isGoatTalking) return
-    handleSend({
+  return (
+    <>
+      <div className="flex flex-col chat-container">
+        <Navbar
+          setSidebar={setSidebar}
+          sidebar={sidebar}
+          setSidebarRight={setSidebarRight}
+          sidebarRight={sidebarRight}
+        />
+        <div className="relative h-full flex flex-row overflow-hidden">
+          <Sidebar visible={sidebar} />
+          <div className="max-w-[800px] mt-1 mx-auto">
+            <Chat
+              messages={messages}
+              loading={loading}
+              onSend={handleSend}
+              onReset={handleReset}
+            />
+          </div>
+          <SidebarRight visible={sidebarRight} />
+        </div>
+        {mode === 'as_weird_as_it_gets' && <VoiceClone />}
+        {mode === 'dance_slow_sing_slow' && (
+          <Monolog
+            onSend={handleSend}
+            modeName={mode}
+            interval={1000}
+            content="sing a song"
+          />
+        )}
+        {mode === 'speech_abstract' && (
+          <Monolog
+            onSend={handleSend}
+            modeName={mode}
+            interval={1000}
+            content={generateRandomWords(6)}
+          />
+        )}
+        {mode === 'walking_hectic_asking' && (
+          <Monolog
+            onSend={handleSend}
+            modeName={mode}
+            interval={3000}
+            content="ask me a weird and short question"
+          />
+        )}
+        <Footer />
+      </div>
+    </>
+  )
+}
+
+interface MonologProps {
+  onSend: (message: Message) => void
+  modeName: Mode
+  interval: number
+  content: string
+}
+const Monolog: FC<MonologProps> = ({ onSend, modeName, interval, content }) => {
+  const { isGoatTalking, systemPrompt } = useStore()
+
+  const [finished, setFinished] = useState(false)
+
+  const intervalFunction = () => {
+    callbackFunction()
+    setFinished(true)
+  }
+
+  const callbackFunction = useCallback(() => {
+    const promptIsSame = Object.is(systemPrompt, modePrompts[modeName])
+    // console.log({ isGoatTalking, promptIsSame })
+    if (isGoatTalking || !promptIsSame) return
+    onSend({
       role: 'user',
-      content: generateRandomWords(Math.ceil(Math.random() * 12)),
+      content: content,
     })
-  }, [isGoatTalking, handleSend])
+  }, [isGoatTalking, systemPrompt, onSend])
 
   useEffect(() => {
-    const interval = setInterval(intervalFunction, 1000)
-
-    return () => clearInterval(interval)
-  }, [intervalFunction])
+    setFinished(false)
+    const timer = setTimeout(intervalFunction, interval)
+    return () => clearTimeout(timer)
+  }, [finished])
 
   return null
 }
