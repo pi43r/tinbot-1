@@ -21,6 +21,7 @@ export default function Home() {
     setIsGoatTalking,
     isGoatTalking,
     mode,
+    sttLanguage,
   } = useStore()
 
   const handleSend = async (message: Message) => {
@@ -41,6 +42,7 @@ export default function Home() {
     if (!response.ok) {
       setLoading(false)
       throw new Error(response.statusText)
+      handleSend(message)
     }
 
     const { result } = await response.json()
@@ -59,14 +61,18 @@ export default function Home() {
   useEffect(() => {
     console.log(mode)
     const prompt = modePrompts[mode]
-    if (prompt) {
-      setSystemPrompt(prompt)
+    if (!prompt) return
+
+    if (sttLanguage == 'de') {
+      setSystemPrompt(prompt.de)
+    } else {
+      setSystemPrompt(prompt.en)
     }
-  }, [mode, setSystemPrompt])
+  }, [mode, setSystemPrompt, sttLanguage])
 
   function generateRandomString(length: number) {
     let result = ''
-    const characters = 'abcdefghijklmnopqrstuvwxyz'
+    const characters = 'abcdefghijklmnopqrstuvw'
     const charactersLength = characters.length
     for (let i = 0; i < length; i++) {
       // randomly select a character and append it to the result string
@@ -104,13 +110,13 @@ export default function Home() {
           </div>
           <SidebarRight visible={sidebarRight} />
         </div>
-        {mode === 'as_weird_as_it_gets' && <VoiceClone />}
+        {mode === 'as_weird_as_it_gets' && <LoadRandomAudio />}
         {mode === 'dance_slow_sing_slow' && (
           <Monolog
             onSend={handleSend}
             modeName={mode}
             interval={1000}
-            content="sing a song"
+            content={sttLanguage == 'de' ? 'sing ein lied' : 'sing a song'}
           />
         )}
         {mode === 'speech_abstract' && (
@@ -126,7 +132,11 @@ export default function Home() {
             onSend={handleSend}
             modeName={mode}
             interval={3000}
-            content="ask me a weird and short question"
+            content={
+              sttLanguage == 'de'
+                ? 'stelle mir eine absurde Frage'
+                : 'ask me a weird and short question'
+            }
           />
         )}
         <Footer />
@@ -152,8 +162,10 @@ const Monolog: FC<MonologProps> = ({ onSend, modeName, interval, content }) => {
   }
 
   const callbackFunction = useCallback(() => {
-    const promptIsSame = Object.is(systemPrompt, modePrompts[modeName])
-    // console.log({ isGoatTalking, promptIsSame })
+    const promptIsSame =
+      Object.is(systemPrompt, modePrompts[modeName]?.en) ||
+      Object.is(systemPrompt, modePrompts[modeName]?.de)
+    console.log({ isGoatTalking, promptIsSame })
     if (isGoatTalking || !promptIsSame) return
     onSend({
       role: 'user',
@@ -168,4 +180,30 @@ const Monolog: FC<MonologProps> = ({ onSend, modeName, interval, content }) => {
   }, [finished])
 
   return null
+}
+
+const LoadRandomAudio: FC = () => {
+  const path: string = '/sounds/'
+  const fileNames: string[] = ['1.mp3', '2.mp3', '3.mp3', '4.mp3', '5.mp3']
+  const pickRandomAudio = (): string =>
+    path + fileNames[Math.floor(Math.random() * fileNames.length)]
+  const audioRef = useRef<HTMLAudioElement>(null)
+
+  useEffect(() => {
+    if (!audioRef.current) return
+    const audio = audioRef.current
+    const handleAudioEnded = (): void => {
+      audio.src = pickRandomAudio()
+      audio.play()
+    }
+
+    audioRef.current.addEventListener('ended', handleAudioEnded)
+    audioRef.current.play()
+
+    return () => {
+      audio.removeEventListener('ended', handleAudioEnded)
+    }
+  }, [])
+
+  return <audio ref={audioRef} src={pickRandomAudio()}></audio>
 }

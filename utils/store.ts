@@ -17,6 +17,8 @@ interface GlobalStore {
   setisGoogleOut: (bool: boolean) => void
   uberduckVoice: UberduckVoice
   setUberduckVoice: (voice: UberduckVoice) => void
+  uberduckSingingVoice: UberduckVoice
+  setUberduckSingingVoice: (voice: UberduckVoice) => void
   uberduckVoices: UberduckVoice[]
   setUberduckVoices: (arr: UberduckVoice[]) => void
   mode: Mode
@@ -42,6 +44,8 @@ export const useStore = create<GlobalStore>()((set) => ({
   setisGoogleOut: (bool) => set({ isGoogleOut: bool }),
   uberduckVoice: {} as UberduckVoice,
   setUberduckVoice: (voice) => set({ uberduckVoice: voice }),
+  uberduckSingingVoice: {} as UberduckVoice,
+  setUberduckSingingVoice: (voice) => set({ uberduckSingingVoice: voice }),
   uberduckVoices: [],
   setUberduckVoices: (arr) => set({ uberduckVoices: arr }),
   mode: 'idle',

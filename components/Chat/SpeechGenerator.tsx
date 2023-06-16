@@ -11,18 +11,21 @@ interface SpeechGeneratorProps {
 const SpeechGenerator: FC<SpeechGeneratorProps> = ({ voicemodel, text }) => {
   const [speech, setSpeech] = useState('')
   const audioRef = useRef<HTMLAudioElement>(null)
-  const { isGoatTalking, setIsGoatTalking, mode } = useStore()
+  const { isGoatTalking, setIsGoatTalking, mode, uberduckSingingVoice } =
+    useStore()
 
   function handleAudioEnd() {
     setIsGoatTalking(false)
   }
 
   async function generateVoiceClone() {
+    const randomReferenceAudio =
+      referenceAudios[Math.floor(Math.random() * referenceAudios.length)].uuid
     const response = await fetch('/api/uberduck/convert', {
       method: 'POST',
       body: JSON.stringify({
-        voicemodel_uuid: '6a7e6e1e-0375-44ea-b6f1-6e296ede2a52',
-        reference_audio_uuid: referenceAudios[1].uuid,
+        voicemodel_uuid: voicemodel,
+        reference_audio_uuid: randomReferenceAudio,
         pitch_shift: 0,
       }),
     })
@@ -70,7 +73,7 @@ const SpeechGenerator: FC<SpeechGeneratorProps> = ({ voicemodel, text }) => {
       method: 'POST',
       body: JSON.stringify({
         pace: 1,
-        voicemodel_uuid: '0e3bb524-9336-4021-b63f-f324d8ecea62',
+        voicemodel_uuid: uberduckSingingVoice.uuid,
         speech: text,
       }),
     })
@@ -84,8 +87,6 @@ const SpeechGenerator: FC<SpeechGeneratorProps> = ({ voicemodel, text }) => {
   useEffect(() => {
     if (mode == 'dance_slow_sing_slow') {
       generateSinging()
-    } else if (mode == 'as_weird_as_it_gets') {
-      generateVoiceClone()
     } else {
       generateSpeech()
     }

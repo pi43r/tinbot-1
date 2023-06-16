@@ -26,8 +26,9 @@ export async function POST(req: NextRequest) {
 
     // const prompt = formData.get('prompt') as string
     const timestamp = formData.get('timestamp') as string
+    const language = formData.get('language') as string
     const audio = formData.get('audio') as File
-
+    console.log(language)
     const stream = audio.stream() as streamWeb.ReadableStream<Uint8Array>
     const readableStream = Readable.fromWeb(stream)
     //@ts-ignore
@@ -41,7 +42,7 @@ export async function POST(req: NextRequest) {
       '', // prompt https://platform.openai.com/docs/guides/speech-to-text/prompting
       'text', // response
       0, // temperature
-      '' // language
+      language // language
     )
 
     console.log('transcription: ', transcription.data)

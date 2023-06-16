@@ -11,7 +11,8 @@ interface ListenButtonProps {
 
 const POST_DATA = true
 const ListenButtonWhisper: FC<ListenButtonProps> = ({ setContent, onSend }) => {
-  const { mode, isGoatTalking, setIsGoatTalking, minDecibel } = useStore()
+  const { mode, isGoatTalking, setIsGoatTalking, minDecibel, sttLanguage } =
+    useStore()
   const [result, setResult] = useState<Transcription>({} as Transcription)
   const [isRecording, setIsRecording] = useState(false)
   const [
@@ -46,6 +47,11 @@ const ListenButtonWhisper: FC<ListenButtonProps> = ({ setContent, onSend }) => {
         formData.append('audio', chunks)
         // formData.append('prompt', prompt.current || '')
         formData.append('timestamp', timestamp)
+        if (sttLanguage) {
+          formData.append('language', sttLanguage)
+        } else {
+          formData.append('language', '')
+        }
         setIsGoatTalking(true)
         const res = await fetch('/api/transcription', {
           method: 'POST',
@@ -72,7 +78,7 @@ const ListenButtonWhisper: FC<ListenButtonProps> = ({ setContent, onSend }) => {
         console.log('POST DATA')
       }
     },
-    [setIsGoatTalking]
+    [setIsGoatTalking, sttLanguage]
   )
 
   /**

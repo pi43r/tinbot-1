@@ -10,7 +10,8 @@ import {
   useCallback,
 } from 'react'
 import { useStore } from '@/utils/store'
-import useVoices from '@/utils/hooks/useVoices'
+// import useVoices from '@/utils/hooks/useVoices'
+import { uberduckVoices } from '@/utils/modes'
 
 export const InputPicker: FC = () => {
   const { sttLanguage, setSttLanguage, isGoogleIn } = useStore()
@@ -23,6 +24,10 @@ export const InputPicker: FC = () => {
   useEffect(() => {
     /* retrieve sttLanguage from local storage when website first loads and set it to our state */
     const storedLanguage = localStorage.getItem('sttLanguage')
+    if (storedLanguage === '') {
+      setSttLanguage(storedLanguage)
+      return
+    }
     if (storedLanguage && storedLanguage !== sttLanguage) {
       setSttLanguage(storedLanguage)
     }
@@ -39,8 +44,9 @@ export const InputPicker: FC = () => {
         id="input-picker"
         value={sttLanguage}
         onChange={handleInputChange}
-        disabled={!isGoogleIn}
+        // disabled={!isGoogleIn}
       >
+        <option value="">Any</option>
         <option value="en">English</option>
         <option value="de">Deutsch</option>
       </select>
@@ -65,9 +71,15 @@ export const OutputPicker: FC = () => {
 }
 
 const UberduckOutputPicker: FC = () => {
-  const { setUberduckVoice, uberduckVoice } = useStore()
+  const {
+    setUberduckVoice,
+    uberduckVoice,
+    uberduckSingingVoice,
+    setUberduckSingingVoice,
+  } = useStore()
   const uberduckOutputPickerRef = useRef<HTMLSelectElement>(null)
-  const uberduckVoices = useVoices()
+  const uberduckSingingPickerRef = useRef<HTMLSelectElement>(null)
+  // const uberduckVoices = useVoices()
 
   // handle Uberduck
   useEffect(() => {
@@ -84,11 +96,28 @@ const UberduckOutputPicker: FC = () => {
   }, [setUberduckVoice, uberduckVoice, uberduckVoices])
 
   useEffect(() => {
-    // first get and set from storage
-    const localUber = localStorage.getItem('uberduckVoice')
-    if (localUber) {
-      const voice = JSON.parse(localUber)
-      setUberduckVoice(voice)
+    if (uberduckVoices.length > 0 && !uberduckSingingVoice?.name) {
+      setUberduckSingingVoice(uberduckVoices[uberduckVoices.length - 2])
+      return
+    }
+    if (!uberduckSingingVoice) return
+    if (uberduckSingingPickerRef.current) {
+      const value = uberduckSingingVoice.name
+      const index = uberduckVoices.findIndex((voice) => voice.name === value)
+      uberduckSingingPickerRef.current.selectedIndex = index
+    }
+  }, [setUberduckSingingVoice, uberduckSingingVoice, uberduckVoices])
+
+  useEffect(() => {
+    const uberVoice = localStorage.getItem('uberduckVoice')
+    if (uberVoice) {
+      const storedVoice = JSON.parse(uberVoice)
+      setUberduckVoice(storedVoice)
+    }
+    const uberSinging = localStorage.getItem('uberduckSingingVoice')
+    if (uberSinging) {
+      const storedSingingVoice = JSON.parse(uberSinging)
+      setUberduckSingingVoice(storedSingingVoice)
     }
   }, [])
 
@@ -102,20 +131,50 @@ const UberduckOutputPicker: FC = () => {
     [setUberduckVoice, uberduckVoices]
   )
 
+  const handleUberduckSingingVoice = useCallback(
+    (event: React.ChangeEvent<HTMLSelectElement>): void => {
+      const voiceIndex = parseInt(event.target.value)
+      const voice = uberduckVoices[voiceIndex]
+      setUberduckSingingVoice(voice)
+      localStorage.setItem('uberduckSingingVoice', JSON.stringify(voice))
+    },
+    [setUberduckSingingVoice, uberduckVoices]
+  )
+
   return (
-    <select
-      className="p-2"
-      name="output-picker"
-      id="output-picker"
-      ref={uberduckOutputPickerRef}
-      onChange={handleUberduckOutputLanguage}
-    >
-      {uberduckVoices.map((voice, index) => (
-        <option key={voice.uuid} value={index}>
-          {voice.name}
-        </option>
-      ))}
-    </select>
+    <>
+      <select
+        className="p-2"
+        name="output-picker"
+        id="output-picker"
+        ref={uberduckOutputPickerRef}
+        onChange={handleUberduckOutputLanguage}
+      >
+        {uberduckVoices.map((voice, index) => (
+          <option key={voice.uuid} value={index}>
+            {voice.name}
+          </option>
+        ))}
+      </select>
+      <p className="text-gray-400">singing voice</p>
+      <select
+        className="p-2"
+        name="singing-voice-picker"
+        id="singing-voice-picker"
+        ref={uberduckSingingPickerRef}
+        onChange={handleUberduckSingingVoice}
+      >
+        {uberduckVoices.map((voice, index) => (
+          <option
+            key={voice.uuid}
+            value={index}
+            selected={uberduckSingingVoice?.name === voice.name}
+          >
+            {voice.name}
+          </option>
+        ))}
+      </select>
+    </>
   )
 }
 

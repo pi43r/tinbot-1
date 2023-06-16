@@ -1,7 +1,7 @@
 import { Mode } from '@/utils/modes'
 
 export enum OpenAIModel {
-  DAVINCI_TURBO = 'gpt-3.5-turbo',
+  DAVINCI_TURBO = 'gpt-3.5-turbo-0613',
 }
 
 export interface Message {

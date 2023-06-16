@@ -14,7 +14,7 @@ const VoiceClone: FC = () => {
   const [speech, setSpeech] = useState('')
   const refAudioObj = useRef<AudioObj | null>(null)
   const audioRef = useRef<HTMLAudioElement>(null)
-  const { isGoatTalking, setIsGoatTalking, mode } = useStore()
+  const { isGoatTalking, setIsGoatTalking, uberduckVoice } = useStore()
 
   function handleAudioEnd() {
     setIsGoatTalking(false)
@@ -25,7 +25,7 @@ const VoiceClone: FC = () => {
     const response = await fetch('/api/uberduck/convert', {
       method: 'POST',
       body: JSON.stringify({
-        voicemodel_uuid: '6a7e6e1e-0375-44ea-b6f1-6e296ede2a52',
+        voicemodel_uuid: uberduckVoice.uuid,
         reference_audio_uuid: refAudioObj.current.uuid,
         pitch_shift: 0,
       }),
@@ -40,7 +40,7 @@ const VoiceClone: FC = () => {
   useEffect(() => {
     refAudioObj.current =
       referenceAudios[Math.floor(Math.random() * referenceAudios.length)]
-    console.log('cloone')
+    console.log('clone')
     generateVoiceClone()
 
     setIsGoatTalking(true)

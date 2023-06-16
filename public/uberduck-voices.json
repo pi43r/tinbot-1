@@ -13,5 +13,6 @@
     {"name": "peppa-pig", "uuid": "63e0039e-7430-4cad-b514-1aec2ff83867" },
     {"name": "gonzo", "uuid": "e86122fa-caa7-4716-bdc5-45e9fc634bd1" },
     {"name": "speak&spell", "uuid": "8541cb2f-46a4-43e9-90ab-b423036da246"},
-    {"name": "DK-singing", "uuid": "0e3bb524-9336-4021-b63f-f324d8ecea62"}
+    {"name": "DK-singing", "uuid": "0e3bb524-9336-4021-b63f-f324d8ecea62"},
+    {"name": "glados-de","uuid": "fc8704ea-e016-4d5f-bd8c-61f3df8ee677"}
 ]
