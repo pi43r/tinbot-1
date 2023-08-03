@@ -4,11 +4,11 @@ import { Footer } from '@/components/Layout/Footer'
 import { Navbar } from '@/components/Layout/Navbar'
 import { Sidebar } from '@/components/Layout/Sidebar'
 import { SidebarRight } from '@/components/Layout/SidebarRight'
-import { Message } from '@/types'
+import { Message, pbPrompt } from '@/types'
 import { useStore } from '@/utils/store'
 import { FC, useCallback, useEffect, useRef, useState } from 'react'
-import { modePrompts, Mode } from '@/utils/modes'
-import VoiceClone from '@/components/Chat/VoiceClone'
+import { Mode, ModePrompts } from '@/utils/modes'
+import { getPrompts, subscribeToPrompts } from '@/utils/pb'
 
 export default function Home() {
   const [sidebar, setSidebar] = useState(false)
@@ -22,6 +22,12 @@ export default function Home() {
     isGoatTalking,
     mode,
     sttLanguage,
+    modePromptsDE,
+    modePromptsEN,
+    setModePromptsDE,
+    setModePromptsEN,
+    updatePromptChange,
+    promptChange,
   } = useStore()
 
   const handleSend = async (message: Message) => {
@@ -59,15 +65,50 @@ export default function Home() {
   }
 
   useEffect(() => {
-    console.log(mode)
-    const prompt = modePrompts[mode]
-    if (!prompt) return
-
-    if (sttLanguage == 'de') {
-      setSystemPrompt(prompt.de)
-    } else {
-      setSystemPrompt(prompt.en)
+    const fetchPrompts = async () => {
+      const pbPromptsEN = await getPrompts('en')
+      const pbPromptsDE = await getPrompts('de')
+      setModePromptsEN({
+        walking_chatting: pbPromptsEN[0].walking_chatting || '',
+        walking_hectic_asking: pbPromptsEN[0].walking_hectic_asking || '',
+        dance_slow_sing_slow: pbPromptsEN[0].dance_slow_sing_slow || '',
+        speech_abstract: pbPromptsEN[0].speech_abstract || '',
+      })
+      setModePromptsDE({
+        walking_chatting: pbPromptsDE[0].walking_chatting || '',
+        walking_hectic_asking: pbPromptsDE[0].walking_hectic_asking || '',
+        dance_slow_sing_slow: pbPromptsDE[0].dance_slow_sing_slow || '',
+        speech_abstract: pbPromptsDE[0].speech_abstract || '',
+      })
     }
+    fetchPrompts()
+    subscribeToPrompts(
+      'en',
+      updatePromptChange,
+      setModePromptsDE,
+      setModePromptsEN
+    )
+    subscribeToPrompts(
+      'de',
+      updatePromptChange,
+      setModePromptsDE,
+      setModePromptsEN
+    )
+  }, [])
+
+  useEffect(() => {
+    console.log('prompt change', promptChange)
+    handleReset()
+  }, [promptChange])
+
+  useEffect(() => {
+    console.log(mode)
+
+    const modePrompts = sttLanguage === 'de' ? modePromptsDE : modePromptsEN
+    const prompt = modePrompts[mode]
+
+    if (!prompt) return
+    setSystemPrompt(prompt)
   }, [mode, setSystemPrompt, sttLanguage])
 
   function generateRandomString(length: number) {
@@ -151,8 +192,10 @@ interface MonologProps {
   interval: number
   content: string
 }
+
 const Monolog: FC<MonologProps> = ({ onSend, modeName, interval, content }) => {
-  const { isGoatTalking, systemPrompt } = useStore()
+  const { isGoatTalking, systemPrompt, modePromptsDE, modePromptsEN } =
+    useStore()
 
   const [finished, setFinished] = useState(false)
 
@@ -163,8 +206,8 @@ const Monolog: FC<MonologProps> = ({ onSend, modeName, interval, content }) => {
 
   const callbackFunction = useCallback(() => {
     const promptIsSame =
-      Object.is(systemPrompt, modePrompts[modeName]?.en) ||
-      Object.is(systemPrompt, modePrompts[modeName]?.de)
+      Object.is(systemPrompt, modePromptsEN[modeName]) ||
+      Object.is(systemPrompt, modePromptsDE[modeName])
     console.log({ isGoatTalking, promptIsSame })
     if (isGoatTalking || !promptIsSame) return
     onSend({

@@ -3,7 +3,20 @@
 @tailwind utilities;
 
 .btn {
-  @apply my-4 p-2 text-sm bg-blue-600 rounded-md cursor-pointer text-gray-50 hover:bg-blue-300;
+  @apply my-4 p-2 text-sm bg-blue-500 rounded cursor-pointer text-gray-50 shadow-md transition;
+}
+
+.btn:hover {
+  @apply translate-y-[1px];
+}
+
+.btn:active {
+  @apply translate-y-[2px] shadow-inner;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .btn-secondary {

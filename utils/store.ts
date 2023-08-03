@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { UberduckVoice, VoiceMsg } from '@/types'
-import { Mode } from './modes'
+import { Mode, ModePrompts, modePromptsDE, modePromptsEN } from './modes'
 
 interface GlobalStore {
   systemPrompt: string
@@ -23,6 +23,12 @@ interface GlobalStore {
   setUberduckVoices: (arr: UberduckVoice[]) => void
   mode: Mode
   setMode: (str: Mode) => void
+  modePromptsDE: ModePrompts
+  setModePromptsDE: (modePrompts: ModePrompts) => void
+  modePromptsEN: ModePrompts
+  setModePromptsEN: (modePrompts: ModePrompts) => void
+  promptChange: number
+  updatePromptChange: () => void
   voiceMsg: VoiceMsg
   setVoiceMsg: (msg: VoiceMsg) => void
   minDecibel: number
@@ -50,6 +56,13 @@ export const useStore = create<GlobalStore>()((set) => ({
   setUberduckVoices: (arr) => set({ uberduckVoices: arr }),
   mode: 'idle',
   setMode: (str) => set({ mode: str }),
+  modePromptsDE: modePromptsDE,
+  setModePromptsDE: (modePrompts) => set({ modePromptsDE: modePrompts }),
+  modePromptsEN: modePromptsEN,
+  setModePromptsEN: (modePrompts) => set({ modePromptsEN: modePrompts }),
+  promptChange: 0,
+  updatePromptChange: () =>
+    set((state) => ({ promptChange: state.promptChange + 1 })),
   voiceMsg: {} as VoiceMsg,
   setVoiceMsg: (msg) => set({ voiceMsg: msg }),
   minDecibel: -60,

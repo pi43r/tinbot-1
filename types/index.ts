@@ -21,6 +21,26 @@ export interface Record {
   expand?: RecordExpand
 }
 
+export interface pbPrompt {
+  collectionId: string
+  collectionName: string
+  created: string
+  id: string
+  walking_chatting?: string
+  walking_hectic_asking?: string
+  dance_slow_sing_slow?: string
+  speech_abstract?: string
+  updated: string
+  expand?: RecordExpand
+}
+
+export interface pbPromptModes {
+  walking_chatting?: string
+  walking_hectic_asking?: string
+  dance_slow_sing_slow?: string
+  speech_abstract?: string
+}
+
 export interface RecordExpand {
   [key: string]: any
 }

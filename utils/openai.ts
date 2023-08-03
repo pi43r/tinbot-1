@@ -14,7 +14,7 @@ export const OpenAIComplete = async (messages: Message[], system: string) => {
     },
     method: 'POST',
     body: JSON.stringify({
-      model: OpenAIModel.DAVINCI_TURBO,
+      model: "gpt-3.5-turbo-16k",
       messages: [
         ...messages,
         {
