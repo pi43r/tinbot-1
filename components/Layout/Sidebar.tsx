@@ -68,6 +68,14 @@ export const Sidebar: FC<SidebarProps> = (props) => {
           />
           <OutputPicker />
         </div>
+        <a
+          href="/prompt"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-center m-2 mx-auto border py-1 px-2"
+        >
+          Edit Prompts
+        </a>
       </div>
     </div>
   )
