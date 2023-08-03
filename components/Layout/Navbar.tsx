@@ -24,7 +24,11 @@ export const Navbar: FC<NavbarProps> = (props) => {
   const isClient = useIsClient()
 
   return (
-    <div className="flex h-[50px] sm:h-[60px] border-b border-neutral-300 py-2 px-2 sm:px-8 items-center justify-between">
+    <div
+      className={`flex h-[50px] sm:h-[60px] border-b border-neutral-300 py-2 px-2 sm:px-8 items-center justify-between transition ${
+        isGoatTalking && 'bg-purple-500'
+      }`}
+    >
       <IconAdjustmentsHorizontal
         className="hover:opacity-50 cursor-pointer"
         onClick={() => setSidebar(!sidebar)}
